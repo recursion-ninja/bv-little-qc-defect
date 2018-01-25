@@ -13,7 +13,7 @@ maintainer:          hackage@recursion.ninja
 copyright:
 category:            Data, Bit Vectors
 build-type:          Simple
-extra-source-files:  README.md, CHANGELOG.md
+extra-source-files:  changelog.md, README.md, stack.yaml
 
 cabal-version:      >= 1.22
 
