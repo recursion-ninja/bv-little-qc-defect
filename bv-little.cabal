@@ -32,6 +32,7 @@ library
   exposed-modules:  Data.BitVector.LittleEndian
     
   ghc-options:      -O2
+                    
                     -- Sanity check warnings
                     -Wall
                     -Wcompat
@@ -134,4 +135,4 @@ benchmark benchmark-suite
                     -Wwrong-do-bind
 
                     -- Turn off type default warnings
-                    -Wtype-defaults
+                    -Wno-type-defaults
