@@ -21,7 +21,7 @@ benchmarks = bgroup "MutualExclusionSet"
 
 
 bitvectorBench :: Benchmark
-bitvectorBench = bench "BitVector 'bitvector' is constant-time construction" . nf (bitvector 10000) $ 2^10000 - 2^1000 + 2^100 - 2^10 + 2^1
+bitvectorBench = bench "BitVector 'bitvector' is constant-time construction" . nf (fromNumber 10000) $ 2^10000 - 2^1000 + 2^100 - 2^10 + 2^1
 
 {-
 invertBench :: Benchmark
