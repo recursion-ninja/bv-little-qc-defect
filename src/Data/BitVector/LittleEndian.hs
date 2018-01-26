@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.BitVector.LittleEndian
--- Copyright   :  (c) 2018 Alex Washburn
+-- Copyright   :  (c) Alex Washburn 2018
 -- License     :  BSD-style
 --
 -- Maintainer  :  github@recursion.ninja
@@ -38,7 +38,8 @@
 --
 -----------------------------------------------------------------------------
 
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, MagicHash, TypeFamilies #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, MagicHash #-}
+{-# LANGUAGE Trustworthy, TypeFamilies #-}
 
 module Data.BitVector.LittleEndian
   ( BitVector()
