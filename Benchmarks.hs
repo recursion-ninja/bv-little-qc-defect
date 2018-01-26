@@ -11,17 +11,94 @@ main :: IO ()
 main = defaultMain [ benchmarks ]
 
 benchmarks :: Benchmark
-benchmarks = bgroup "MutualExclusionSet"
-    [ bitvectorBench
+benchmarks = bgroup "BitVector"
+    [ fromNumberBench
+    , isZeroVectorBench
+    , zeroPopCountBench
     ]
 
 
+-- |
+-- This number is the first 10-digit prime in e. It is used as a "no trick up my sleeve" arbitrary large number.
+--
+-- ceiling ( log_2 (prime) ) === 33
+tinyNumber :: Integer
+tinyNumber = 7427466391
 
 
+-- |
+-- This number is phi * 10^20. It is used as a "no trick up my sleeve" arbitrary large number.
+--
+-- ceiling ( log_2 (phi * 10^20) ) === 68
+smallNumber :: Integer
+smallNumber = 161803398874989484820
 
 
-bitvectorBench :: Benchmark
-bitvectorBench = bench "BitVector 'bitvector' is constant-time construction" . nf (fromNumber 10000) $ 2^10000 - 2^1000 + 2^100 - 2^10 + 2^1
+-- |
+-- This number is e * 10^50. It is used as a "no trick up my sleeve" arbitrary large number.
+--
+-- ceiling ( log_2 (e * 10^50) ) === 168
+mediumNumber :: Integer
+mediumNumber = 271828182845904523536028747135266249775724709369995
+
+
+-- |
+-- This number is pi * 10^100. It is used as a "no trick up my sleeve" arbitrary large number.
+--
+-- ceiling ( log_2 (pi * 10^100) ) === 334
+largeNumber :: Integer
+largeNumber = 31415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679
+
+
+-- |
+-- This number is -1 * √2 * 10^200. It is used as a "no trick up my sleeve" arbitrary large negative number.
+--
+-- ceiling ( log_2 (√2 * 10^200) ) === 665
+hugeNumber :: Integer
+hugeNumber  = 14142135623730950488016887242096980785696718753769480731766797379907324784621070388503875343276415727350138462309122970249248360558507372126441214970999358314132226659275055927557999505011527820605715
+
+
+fromNumberBench :: Benchmark
+fromNumberBench = constantTimeBenchmark "fromNumber" id g
+  where
+    g int = let !bitCount = logBase2Word int
+            in  fromNumber bitCount
+    logBase2Word = succ . succ . ceiling . logBase (2.0 :: Double) . fromIntegral . abs
+  
+
+isZeroVectorBench :: Benchmark
+isZeroVectorBench = constantTimeBenchmark "isZeroVector" id g
+  where
+    g int val = let !bitCount  = logBase2Word int
+                    !bitVector = fromNumber bitCount int
+                in  val `seq` isZeroVector bitVector
+    logBase2Word = succ . succ . ceiling . logBase (2.0 :: Double) . fromIntegral . abs
+  
+
+zeroPopCountBench :: Benchmark
+zeroPopCountBench = constantTimeBenchmark "popCount is zero" id g
+  where
+    g int val = let !bitCount  = logBase2Word int
+                    !bitVector = fromNumber bitCount int
+                in  val `seq` ((0==) . popCount) bitVector
+    logBase2Word = succ . succ . ceiling . logBase (2.0 :: Double) . fromIntegral . abs
+  
+
+constantTimeBenchmark :: (NFData a, NFData b) => String -> (Integer -> a) -> (Integer -> a -> b) -> Benchmark
+constantTimeBenchmark  label f g = bgroup label $ generateBenchmark <$>
+    [ ("zero"  ,            0)
+    , ("tiny"  ,   tinyNumber)
+    , ("small" ,  smallNumber)
+    , ("medium", mediumNumber)
+    , ("large" ,  largeNumber)
+    , ("huge"  ,   hugeNumber)
+    ]
+  where
+    generateBenchmark (intLabel, intValue) = bench intLabel $ nf app target
+      where
+        !target    = force $ f intValue
+        !app       = g intValue
+    
 
 {-
 invertBench :: Benchmark
