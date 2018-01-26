@@ -2,8 +2,8 @@ name:                bv-little
 version:             0.1.0.0
 
 -- A short (one-line) description of the package.
-synopsis:            Time & space efficient little-endian bitvector library
-description:         Little-endian bit-vectors implemented with Integers.
+synopsis:            Efficient little-endian bit-vector library
+description:         Time & space effcient little-endian bit-vectors implemented with Integers.
 homepage:            https://github.com/recursion-ninja/bv-little
 bug-reports:         https://github.com/recursion-ninja/bv-little/issues
 license:             BSD3
