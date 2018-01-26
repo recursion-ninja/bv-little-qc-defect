@@ -16,6 +16,8 @@ description:
   conversions.
   .
   The declared cost of each operation is either worst-case or amortized.
+  .
+  If you need /big-endian/ bit-vectors, use the <https://hackage.haskell.org/package/bv bv> package instead of this one.
     
 build-type:          Simple
 cabal-version:       >= 1.22
