@@ -75,7 +75,7 @@ bitsTests = testGroup "Bits instance properties"
         n < (fromEnum . dimension) bv ==>
           (bv `clearBit` n === bv .&. complement  (zed .|. bit n))
       where
-        zed = bitvector (dimension bv) (0 :: Integer)
+        zed = fromNumber (dimension bv) (0 :: Integer)
 
     complementBitDefinition :: (NonNegative Int, BitVector) -> Property
     complementBitDefinition (NonNegative n, bv) =
@@ -282,7 +282,7 @@ bitVectorProperties = testGroup "BitVector properties"
     , testProperty "isZeroVector === (0 ==) . popCount" popCountAndZeroVector
     , testProperty "isZeroVector === all not . toBits" zeroVectorAndAllBitsOff
     , testProperty "(0 ==) . toUnsignedNumber ==> isZeroVector" toUnsignedNumImpliesZeroVector
-    , testProperty "toUnsignedNumber . bitvector === id" bitVectorUnsignedNumIdentity
+    , testProperty "toSignedNumber . fromNumber === id" bitVectorUnsignedNumIdentity
     ]
   where
     otoListTest :: BitVector -> Property
@@ -316,8 +316,8 @@ bitVectorProperties = testGroup "BitVector properties"
     zeroBitsIsZeroVector :: Assertion
     zeroBitsIsZeroVector = assertBool "zeroBits is not a 'zero vector'" $ isZeroVector zeroBits
 
-    bitVectorUnsignedNumIdentity :: NonNegative Integer -> Property
-    bitVectorUnsignedNumIdentity (NonNegative num) =
-        (toUnsignedNumber . bitvector width) num === num
+    bitVectorUnsignedNumIdentity :: Integer -> Property
+    bitVectorUnsignedNumIdentity num =
+        (toSignedNumber . fromNumber width) num === num
       where
-        width = succ . ceiling . logBase (2.0 :: Double) $ fromIntegral num
+        width = succ . succ . ceiling . logBase (2.0 :: Double) . fromIntegral $ abs num
