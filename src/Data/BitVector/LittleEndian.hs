@@ -423,8 +423,8 @@ toBits (BV w n) = testBit n <$> [ 0 .. w - 1 ]
 --
 -- The integral value will be interpreted as /little-endian/ so that the least
 -- significant bit of the integral value will be the value of the 0th index of 
--- the resulting bit-vector, and the most significant bit of the inegral value
--- will be the largest index @i@ such that @bv `testBit` i@ is @True@.
+-- the resulting bit-vector, and the most significant bit of the integral value
+-- will be at index @dimension - 1@.
 --
 -- Note that if the bit representation of the integral value exceeds the
 -- supplied dimension, then the most significant bits will be truncated in the
