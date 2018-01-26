@@ -133,4 +133,5 @@ benchmark benchmark-suite
                     -Wunused-matches
                     -Wwrong-do-bind
 
-
+                    -- Turn off type default warnings
+                    -Wtype-defaults
