@@ -4,6 +4,7 @@ import Control.DeepSeq
 import Criterion.Main
 import Data.Bits
 import Data.BitVector.LittleEndian
+import Data.List (nubBy)
 import Data.Semigroup
 
 
@@ -15,6 +16,8 @@ benchmarks = bgroup "BitVector"
     [ fromNumberBench
     , isZeroVectorBench
     , zeroPopCountBench
+    , bitsBench
+    , finiteBitsBench
     ]
 
 
@@ -59,33 +62,115 @@ hugeNumber  = 141421356237309504880168872420969807856967187537694807317667973799
 
 
 fromNumberBench :: Benchmark
-fromNumberBench = constantTimeBenchmark "fromNumber" id g
+fromNumberBench = constantNumberTimeBenchmark "fromNumber" id g
   where
     g int = let !bitCount = logBase2Word int
             in  fromNumber bitCount
-    logBase2Word = succ . succ . ceiling . logBase (2.0 :: Double) . fromIntegral . abs
   
 
 isZeroVectorBench :: Benchmark
-isZeroVectorBench = constantTimeBenchmark "isZeroVector" id g
+isZeroVectorBench = constantNumberTimeBenchmark "isZeroVector" id g
   where
-    g int val = let !bitCount  = logBase2Word int
-                    !bitVector = fromNumber bitCount int
-                in  val `seq` isZeroVector bitVector
-    logBase2Word = succ . succ . ceiling . logBase (2.0 :: Double) . fromIntegral . abs
+    g int _ = let !bitCount  = logBase2Word int
+                  !bitVector = fromNumber bitCount int
+              in  isZeroVector bitVector
   
 
 zeroPopCountBench :: Benchmark
-zeroPopCountBench = constantTimeBenchmark "popCount is zero" id g
+zeroPopCountBench = constantNumberTimeBenchmark "popCount is zero" id g
   where
-    g int val = let !bitCount  = logBase2Word int
-                    !bitVector = fromNumber bitCount int
-                in  val `seq` ((0==) . popCount) bitVector
-    logBase2Word = succ . succ . ceiling . logBase (2.0 :: Double) . fromIntegral . abs
+    g int _ = let !bitCount  = logBase2Word int
+                  !bitVector = fromNumber bitCount int
+              in  ((0==) . popCount) bitVector
   
 
-constantTimeBenchmark :: (NFData a, NFData b) => String -> (Integer -> a) -> (Integer -> a -> b) -> Benchmark
-constantTimeBenchmark  label f g = bgroup label $ generateBenchmark <$>
+bitsBench :: Benchmark
+bitsBench = bgroup "Bits"
+    [   binaryBenchmark "(.|.)" (.|.)
+    ,   binaryBenchmark "(.&.)" (.&.)
+    ,   binaryBenchmark "xor"    xor
+    ,    unaryBenchmark "complement"    complement
+--    ,    unaryBenchmark "bitSize"       bitSize
+    ,    unaryBenchmark "bitSizeMaybe"  bitSizeMaybe
+    ,    unaryBenchmark "isSigned"      isSigned
+    ,    unaryBenchmark "popCount"      popCount
+    , indexingBenchmark "shift"         shift
+    , indexingBenchmark "shiftL"        shiftL
+    , indexingBenchmark "shiftR"        shiftR
+    , indexingBenchmark "rotate"        rotate
+    , indexingBenchmark "rotateL"       rotateL
+    , indexingBenchmark "rotateR"       rotateR
+    , indexingBenchmark "setBit"        setBit
+    , indexingBenchmark "clearBit"      clearBit
+    , indexingBenchmark "complementBit" complementBit
+    , indexingBenchmark "testBit"       testBit
+    ]
+
+
+finiteBitsBench :: Benchmark
+finiteBitsBench = bgroup "FiniteBits"
+    [ unaryBenchmark "finiteBitSize"      finiteBitSize
+    , unaryBenchmark "countLeadingZeros"  countLeadingZeros
+    , unaryBenchmark "countTrailingZeros" countLeadingZeros
+    ]
+
+
+constantNumberTimeBenchmark :: (NFData a, NFData b) => String -> (Integer -> a) -> (Integer -> a -> b) -> Benchmark
+constantNumberTimeBenchmark  label f g = bgroup label $ generateBenchmark <$> magicNumbers
+  where
+    generateBenchmark (intLabel, intValue) = bench intLabel $ nf app target
+      where
+        !target    = force $ f intValue
+        !app       = g intValue
+
+    
+unaryBenchmark :: NFData a => String -> (BitVector -> a) -> Benchmark
+unaryBenchmark label f = bgroup label $ generateBenchmark <$> magicNumbers
+  where
+    generateBenchmark (intLabel, intValue) = bench intLabel $ nf f target
+      where
+        !target = bvGen intValue
+
+    
+binaryBenchmark :: NFData a => String -> (BitVector -> BitVector -> a) -> Benchmark
+binaryBenchmark label op = bgroup label $ generateBenchmark <$> combinations
+  where
+    generateBenchmark (intLabel1, intValue1, intLabel2, intValue2) = bench message $ nf id target
+      where
+        message  = unwords [intLabel1, "`op`", intLabel2]
+        !lhs     = bvGen intValue1
+        !rhs     = bvGen intValue2
+        target   = lhs `op` rhs
+    combinations = [ (a,b,c,d) | (a,b) <- magicNumbers, (c,d) <- magicNumbers, b < d ]
+
+
+indexingBenchmark :: NFData a => String -> (BitVector -> Int -> a) -> Benchmark
+indexingBenchmark label op = bgroup label $ generateBenchmark <$> combinations
+  where
+    generateBenchmark (intLabel, intValue, idxLabel, idxValue) = bench message $ nf app target
+      where
+        message  = unwords [intLabel, "@", idxLabel <> ":" <> show idxValue]
+        !target  = bvGen intValue
+        app     = (`op` idxValue)
+
+    combinations = do
+        (a, b) <- magicNumbers
+        let bitCount = fromEnum $ logBase2Word b
+        (c, d) <- nubBy (\x y -> snd x == snd y) [("first", 0), ("middle", bitCount `div` 2), ("last", bitCount - 1)]
+        let e = force (a,b,c,d)
+        [e]
+
+
+bvGen :: Integer -> BitVector
+bvGen x = force $ fromNumber (logBase2Word x) x
+
+
+logBase2Word :: Integer -> Word
+logBase2Word = succ . succ . ceiling . logBase (2.0 :: Double) . fromIntegral . abs
+
+
+magicNumbers :: [(String, Integer)]
+magicNumbers =
     [ ("zero"  ,            0)
     , ("tiny"  ,   tinyNumber)
     , ("small" ,  smallNumber)
@@ -93,12 +178,6 @@ constantTimeBenchmark  label f g = bgroup label $ generateBenchmark <$>
     , ("large" ,  largeNumber)
     , ("huge"  ,   hugeNumber)
     ]
-  where
-    generateBenchmark (intLabel, intValue) = bench intLabel $ nf app target
-      where
-        !target    = force $ f intValue
-        !app       = g intValue
-    
 
 {-
 invertBench :: Benchmark
