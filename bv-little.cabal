@@ -21,7 +21,15 @@ description:
     
 build-type:          Simple
 cabal-version:       >= 1.22
-
+                     
+tested-with:         GHC == 8.4.1
+                     GHC == 8.2.2
+                     GHC == 8.0.2
+                     GHC == 7.10.3
+                     GHC == 7.8.4
+                     GHC == 7.6.3
+                     GHC == 7.4.2
+             
 extra-source-files:  changelog.md
                      README.md
                      stack.yaml
@@ -33,7 +41,7 @@ source-repository head
                       
 library
 
-  build-depends:      base             >=4.8
+  build-depends:      base             >=4.5.1
                     , deepseq
                     , hashable
                     , integer-gmp
@@ -87,7 +95,7 @@ Test-Suite test-suite
 
   main-is:          TestSuite.hs
 
-  build-depends:      base               >=4.8
+  build-depends:      base               >=4.5.1
                     , bv-little
                     , mono-traversable   >=1.0
                     , QuickCheck         >=2.0
@@ -104,7 +112,7 @@ benchmark benchmark-suite
 
   main-is:          Benchmarks.hs
                       
-  build-depends:      base               >=4.8
+  build-depends:      base               >=4.5.1
                     , bv-little
                     , criterion
                     , deepseq
@@ -115,6 +123,7 @@ benchmark benchmark-suite
                     -fmax-simplifier-iterations=10
                     -fdicts-cheap
                     -fspec-constr-count=6
+                    -fno-full-laziness
                     -threaded
 
                     -- Sanity check warnings
