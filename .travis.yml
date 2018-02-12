@@ -121,7 +121,7 @@ script:
 
 after_script:
   - cabal install hpc-coveralls
-  - hpc-coveralls [options] [test-suite-names]
+  - hpc-coveralls --coverage-mode=StrictlyFullLines test-suite
 
 # REGENDATA ["bv-little.cabal"]
 # EOF
