@@ -5,7 +5,7 @@
 [![Stackage Nightly](http://stackage.org/package/bv-little/badge/nightly)](http://stackage.org/nightly/package/bv-little)
 [![Stackage LTS](http://stackage.org/package/bv-little/badge/lts)](http://stackage.org/lts/package/bv-little)
 [![Build Status](https://travis-ci.org/recursion-ninja/bv-little.svg?branch=master)](https://travis-ci.org/recursion-ninja/bv-little)
-[![Coverage Status](https://coveralls.io/repos/recursion-ninja/bv-little/badge.svg?branch=master&service=github)](https://coveralls.io/github/recursion-ninja/bv-little?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/recursion-ninja/bv-little/badge.svg?branch=master)](https://coveralls.io/github/recursion-ninja/bv-little?branch=master)
 
 This package contains a efficient implementation of little-endian bit-vectors. It implements most applicable type-classes and also conversions to and from signed or unsigned numbers. Care has been taken to balance the number of transitive dependencies with respect to functionality provided.
 
