@@ -145,4 +145,4 @@ benchmark benchmark-suite
                     -fwarn-overlapping-patterns
 
                     -- Turn off type default warnings
-                    -fwarn-no-type-defaults
+                    -fno-warn-type-defaults
