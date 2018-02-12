@@ -131,11 +131,11 @@ benchmark benchmark-suite
   default-language: Haskell2010
 
   ghc-options:      -O2
-                    -fmax-simplifier-iterations=10
-                    -fdicts-cheap
-                    -fspec-constr-count=6
-                    -fno-full-laziness
                     -threaded
+                    -fdicts-cheap
+                    -fmax-simplifier-iterations=10
+                    -fno-full-laziness
+                    -fspec-constr-count=6
 
                     -- Sanity check warnings
                     -Wall
@@ -145,4 +145,4 @@ benchmark benchmark-suite
                     -fwarn-overlapping-patterns
 
                     -- Turn off type default warnings
-                    -Wno-type-defaults
+                    -fwarn-no-type-defaults
