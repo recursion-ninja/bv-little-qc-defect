@@ -41,7 +41,7 @@ source-repository head
                       
 library
 
-  build-depends:      base             >=4.5.1
+  build-depends:      base             >= 4.5.1 && < 4.10.2
                     , deepseq
                     , hashable
                     , integer-gmp
@@ -95,7 +95,7 @@ Test-Suite test-suite
 
   main-is:          TestSuite.hs
 
-  build-depends:      base               >=4.5.1
+  build-depends:      base             >= 4.5.1 && < 4.10.2
                     , bv-little
                     , mono-traversable
                     , QuickCheck
@@ -112,7 +112,7 @@ benchmark benchmark-suite
 
   main-is:          Benchmarks.hs
                       
-  build-depends:      base               >=4.5.1
+  build-depends:      base             >= 4.5.1 && < 4.10.2
                     , bv-little
                     , criterion
                     , deepseq
