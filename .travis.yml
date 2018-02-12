@@ -125,7 +125,7 @@ script:
   - if $HADDOCK; then cabal new-haddock -w ${HC} ${TEST} ${BENCH} all; else echo "Skipping haddock generation";fi
 
 after_script:
-  - cabal install hpc-coveralls
+  - cabal update && cabal install hpc-coveralls
   - hpc-coveralls --coverage-mode=StrictlyFullLines
                   --exclude-dir=bench
 		  --exclude-dir=test
