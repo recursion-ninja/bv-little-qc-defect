@@ -63,6 +63,7 @@ install:
   - INSTALLED=${INSTALLED-true}
   - GHCHEAD=${GHCHEAD-false}
   - travis_retry cabal update -v
+  - cabal install hpc-coveralls
   - "sed -i.bak 's/^jobs:/-- jobs:/' ${HOME}/.cabal/config"
   - rm -fv cabal.project cabal.project.local
   # Overlay Hackage Package Index for GHC HEAD: https://github.com/hvr/head.hackage
@@ -125,7 +126,7 @@ script:
   - if $HADDOCK; then cabal new-haddock -w ${HC} ${TEST} ${BENCH} all; else echo "Skipping haddock generation";fi
 
 after_script:
-  - cabal update && cabal install hpc-coveralls
+  - export PATH=~/.cabal/bin:$PATH
   - hpc-coveralls --coverage-mode=StrictlyFullLines
                   --exclude-dir=bench
 		  --exclude-dir=test
