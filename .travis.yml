@@ -111,7 +111,8 @@ script:
   # build & run tests, build benchmarks
   - cabal new-build -w ${HC} ${TEST} ${BENCH} all
   - if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${TEST} ${BENCH} all; fi
-
+  # - cabal configure --enable-tests --enable-library-coverage && cabal build && cabal test
+  
   # cabal check
   - (cd bv-little-* && cabal check)
 
@@ -121,7 +122,10 @@ script:
 
 after_script:
   - cabal install hpc-coveralls
-  - hpc-coveralls --coverage-mode=StrictlyFullLines test-suite
+  - hpc-coveralls --coverage-mode=StrictlyFullLines
+                  --exclude-dir=bench
+		  --exclude-dir=test
+		  test-suite
 
 # REGENDATA ["bv-little.cabal"]
 # EOF
