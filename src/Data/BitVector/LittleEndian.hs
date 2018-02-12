@@ -82,9 +82,12 @@ data  BitVector
     = BV
     { dim :: {-# UNPACK #-} !Int -- ^ The /dimension/ of a bit-vector.
     , nat :: !Integer            -- ^ The value of a bit-vector, as a natural number.
-    } deriving ( Data     -- ^ /Since: 0.1.0.0/
-               , Generic  -- ^ /Since: 0.1.0.0/
-               , Typeable -- ^ /Since: 0.1.0.0/
+    } deriving ( Data
+               -- ^ /Since: 0.1.0.0/
+               , Generic
+               -- ^ /Since: 0.1.0.0/
+               , Typeable
+               -- ^ /Since: 0.1.0.0/
                )
 
 
