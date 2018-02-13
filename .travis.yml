@@ -63,7 +63,6 @@ install:
   - INSTALLED=${INSTALLED-true}
   - GHCHEAD=${GHCHEAD-false}
   - travis_retry cabal update -v
-  - cabal install hpc-coveralls
   - "sed -i.bak 's/^jobs:/-- jobs:/' ${HOME}/.cabal/config"
   - rm -fv cabal.project cabal.project.local
   # Overlay Hackage Package Index for GHC HEAD: https://github.com/hvr/head.hackage
@@ -91,6 +90,7 @@ install:
   - cabal new-build -w ${HC} ${TEST} ${BENCH} --project-file="cabal.project" --dep -j2 all
   - cabal new-build -w ${HC} --disable-tests --disable-benchmarks --project-file="cabal.project" --dep -j2 all
   - rm -rf .ghc.environment.* "."/dist
+  - cabal install hpc-coveralls
   - DISTDIR=$(mktemp -d /tmp/dist-test.XXXX)
 
 # Here starts the actual work to be performed for the package under test;
