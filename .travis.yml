@@ -127,6 +127,7 @@ script:
 
 after_script:
   - export PATH=~/.cabal/bin:$PATH
+  - git init
   - hpc-coveralls --coverage-mode=StrictlyFullLines
                   --exclude-dir=bench
                   --exclude-dir=test
