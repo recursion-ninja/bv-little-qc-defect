@@ -110,13 +110,13 @@ script:
   - if $INSTALLED; then echo cabal new-build -w ${HC} --disable-tests --disable-benchmarks $(${HCPKG} list --global --simple-output --names-only | sed 's/\([a-zA-Z0-9-]\{1,\}\) */--constraint="\1 installed" /g') all | sh; else echo "Not building with installed constraints"; fi
 
   # build & run tests, build benchmarks
-  # - cabal new-build -w ${HC} ${TEST} ${BENCH} all
-  # - if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${TEST} ${BENCH} all; fi
-  - cabal new-build -w ${HC} ${BENCH} all
-  - if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${BENCH} all; fi
-  - cabal configure --enable-tests --enable-library-coverage -v2
-  - travis_wait 15 cabal build
-  - travis_wait  5 cabal test --show-details=always
+  - cabal new-build -w ${HC} ${TEST} ${BENCH} all
+  - if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${TEST} ${BENCH} all; fi
+  #- cabal new-build -w ${HC} ${BENCH} all
+  #- if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${BENCH} all; fi
+  #- cabal configure --enable-tests --enable-library-coverage -v2
+  #- travis_wait 15 cabal build
+  #- travis_wait  5 cabal test --show-details=always
 
   # cabal check
   - (cd bv-little-* && cabal check)
@@ -129,8 +129,8 @@ after_script:
   - export PATH=~/.cabal/bin:$PATH
   - hpc-coveralls --coverage-mode=StrictlyFullLines
                   --exclude-dir=bench
-		  --exclude-dir=test
-		  test-suite
+                  --exclude-dir=test
+                  test-suite
 
 # REGENDATA ["bv-little.cabal"]
 # EOF
