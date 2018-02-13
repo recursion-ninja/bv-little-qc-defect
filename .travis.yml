@@ -28,6 +28,7 @@ matrix:
   allow_failures:
     - compiler: "ghc-8.4.1"
 
+
 before_install:
   - HC=${CC}
   - HCPKG=${HC/ghc/ghc-pkg}
@@ -37,6 +38,7 @@ before_install:
   - "PATH=/opt/ghc/bin:/opt/ghc-ppa-tools/bin:$HOME/local/bin:$PATH"
   - HCNUMVER=$(( $(${HC} --numeric-version|sed -E 's/([0-9]+)\.([0-9]+)\.([0-9]+).*/\1 * 10000 + \2 * 100 + \3/') ))
   - echo $HCNUMVER
+
 
 install:
   - cabal --version
@@ -66,6 +68,7 @@ install:
     fi
   - grep -Ev -- '^\s*--' ${HOME}/.cabal/config | grep -Ev '^\s*$'
   - if [ $HCNUMVER -eq 80202 ]; then cabal new-install -w ${HC} --symlink-bindir=$HOME/.local/bin hlint --constraint='hlint ==2.0.*'; fi
+  - cabal new-install -w ${HC} --symlink-bindir=$HOME/.local/bin hpc-coveralls
   - "printf 'packages: \".\"\\n' > cabal.project"
   - cat cabal.project
   - if [ -f "./configure.ac" ]; then
@@ -76,6 +79,7 @@ install:
   - cabal new-build -w ${HC} --disable-tests --disable-benchmarks --project-file="cabal.project" --dep -j2 all
   - rm -rf .ghc.environment.* "."/dist
   - DISTDIR=$(mktemp -d /tmp/dist-test.XXXX)
+
 
 # Here starts the actual work to be performed for the package under test;
 # any command which exits with a non-zero exit code causes the build to fail.
@@ -106,6 +110,15 @@ script:
   # haddock
   - rm -rf ./dist-newstyle
   - if $HADDOCK; then cabal new-haddock -w ${HC} ${TEST} ${BENCH} all; else echo "Skipping haddock generation";fi
+
+
+after_script:
+  - export PATH=~/.cabal/bin:$PATH
+  - git init
+  - hpc-coveralls --coverage-mode=StrictlyFullLines
+                  --exclude-dir=bench
+                  --exclude-dir=test
+                  test-suite
 
 # REGENDATA ["-l","--no-cache","bv-little.cabal"]
 # EOF
