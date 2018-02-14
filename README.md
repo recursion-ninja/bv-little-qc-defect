@@ -15,7 +15,9 @@ If you need big-endian bit-vectors, use the [`bv`](https://hackage.haskell.org/p
 
 The test-suite ensures that all type-class instances are "lawful" and that data-structure specific functionality is well defined.
 
-The `TestSuite.hs` file contains the specification. It can be run by invoking either of the following commands:
+The `TestSuite.hs` file contains the specification. It can be run by invoking any of the following commands:
+
+  * `cabal new-test`
 
   * `cabal test`
 
@@ -25,7 +27,9 @@ The `TestSuite.hs` file contains the specification. It can be run by invoking ei
 
 The benchmarks provide an empirical check for the asymptotic complexity of data-structure operations and also provides an easy metric for detecting performance regressions.
 
-The `Benchmaks.hs` file contains these metrics. It can be run by invoking either of the following commands:
+The `Benchmaks.hs` file contains these metrics. It can be run by invoking any of the following commands:
+
+  * `cabal new-bench`
 
   * `cabal bench`
 
