@@ -29,18 +29,19 @@ install:
   - cabal install hpc-coveralls
 
 script:
-  - cabal configure --enable-tests --enable-coverage -v2 -f dev
-  - travis_wait 60 cabal build
-  - travis_wait 20 cabal test --show-details=always --test-option=--qc-max-success=1000
+  - cabal configure --enable-coverage --enable-benchmarks --enable-tests -v2
   - cabal sdist
-  - cabal haddock | grep "100%" | wc -l | grep "11"
+  - cabal build
+  - cabal test --show-details=always --test-option=--qc-max-success=1000
+  - cabal check
+  - cabal haddock
 
 after_script:
   - export PATH=~/.cabal/bin:$PATH
   - hpc-coveralls --coverage-mode=StrictlyFullLines
                   --exclude-dir=bench
                   --exclude-dir=tests
-                  tests
+                  test-suite
 
 notifications:
   email: false
