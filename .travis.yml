@@ -4,16 +4,22 @@
 #
 # For more information, see https://github.com/hvr/multi-ghc-travis
 #
+
 language: c
+
+
 sudo: false
+
 
 git:
   submodules: false  # whether to recursively clone submodules
+
 
 cache:
   directories:
     - $HOME/.cabal/packages
     - $HOME/.cabal/store
+
 
 before_cache:
   - rm -fv $HOME/.cabal/packages/hackage.haskell.org/build-reports.log
@@ -23,8 +29,8 @@ before_cache:
   - rm -fv $HOME/.cabal/packages/hackage.haskell.org/01-index.cache
   - rm -fv $HOME/.cabal/packages/hackage.haskell.org/01-index.tar
   - rm -fv $HOME/.cabal/packages/hackage.haskell.org/01-index.tar.idx
-
   - rm -rfv $HOME/.cabal/packages/head.hackage
+
 
 matrix:
   include:
@@ -44,6 +50,7 @@ matrix:
   allow_failures:
     - compiler: "ghc-8.4.1"
 
+
 before_install:
   - HC=${CC}
   - HCPKG=${HC/ghc/ghc-pkg}
@@ -54,9 +61,11 @@ before_install:
   - HCNUMVER=$(( $(${HC} --numeric-version|sed -E 's/([0-9]+)\.([0-9]+)\.([0-9]+).*/\1 * 10000 + \2 * 100 + \3/') ))
   - echo $HCNUMVER
 
+
 install:
   - cabal --version
   - echo "$(${HC} --version) [$(${HC} --print-project-git-commit-id 2> /dev/null || echo '?')]"
+  - COVER=${COVER---enable-coverage}
   - BENCH=${BENCH---enable-benchmarks}
   - TEST=${TEST---enable-tests}
   - HADDOCK=${HADDOCK-true}
@@ -82,16 +91,18 @@ install:
     fi
   - grep -Ev -- '^\s*--' ${HOME}/.cabal/config | grep -Ev '^\s*$'
   - if [ $HCNUMVER -eq 80202 ]; then cabal new-install -w ${HC} --symlink-bindir=$HOME/.local/bin hlint --constraint='hlint ==2.0.*'; fi
+  - cabal new-install -w ${HC} --symlink-bindir=$HOME/.local/bin hpc-coveralls
   - "printf 'packages: \".\"\\n' > cabal.project"
   - cat cabal.project
   - if [ -f "./configure.ac" ]; then
       (cd "." && autoreconf -i);
     fi
   - rm -f cabal.project.freeze
-  - cabal new-build -w ${HC} ${TEST} ${BENCH} --project-file="cabal.project" --dep -j2 all
-  - cabal new-build -w ${HC} --disable-tests --disable-benchmarks --project-file="cabal.project" --dep -j2 all
+  - cabal new-build -w ${HC} ${BENCH} ${COVER} ${TEST} --project-file="cabal.project" --dep -j2 all
+  - cabal new-build -w ${HC} --disable-benchmarks --disable-coverage --disable-tests --project-file="cabal.project" --dep -j2 all
   - rm -rf .ghc.environment.* "."/dist
   - DISTDIR=$(mktemp -d /tmp/dist-test.XXXX)
+
 
 # Here starts the actual work to be performed for the package under test;
 # any command which exits with a non-zero exit code causes the build to fail.
@@ -110,8 +121,8 @@ script:
   - if $INSTALLED; then echo cabal new-build -w ${HC} --disable-tests --disable-benchmarks $(${HCPKG} list --global --simple-output --names-only | sed 's/\([a-zA-Z0-9-]\{1,\}\) */--constraint="\1 installed" /g') all | sh; else echo "Not building with installed constraints"; fi
 
   # build & run tests, build benchmarks
-  - cabal new-build -w ${HC} ${TEST} ${BENCH} all
-  - if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${TEST} ${BENCH} all; fi
+  - cabal new-build -w ${HC} ${BENCH} ${COVER} ${TEST} all
+  - if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${BENCH} ${COVER} ${TEST} all; fi
 
   # hlint
   - if [ $HCNUMVER -eq 80202 ]; then (cd bv-little-* && hlint src); fi
@@ -121,7 +132,12 @@ script:
 
   # haddock
   - rm -rf ./dist-newstyle
-  - if $HADDOCK; then cabal new-haddock -w ${HC} ${TEST} ${BENCH} all; else echo "Skipping haddock generation";fi
+  - if $HADDOCK; then cabal new-haddock -w ${HC} ${BENCH} ${COVER} ${TEST} all; else echo "Skipping haddock generation";fi
 
+
+after_script:
+  #coveralls
+  - cd bv-little-* && hpc-coveralls --coverage-mode=StrictlyFullLines --exclude-dir=bench --exclude-dir=test test-suite
+  
 # REGENDATA ["-l","bv-little.cabal"]
 # EOF
