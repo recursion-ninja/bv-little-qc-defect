@@ -342,10 +342,12 @@ semigroupProperties = testGroup "Properties of a Semigroup"
         a <> (b <> c) === (a <> b) <> c
 
     foldableApplication :: NonEmptyList BitVector -> Property
-    foldableApplication (NonEmptyList (x:xs)) =
+    foldableApplication nel =
         sconcat bvs === foldr1 mappend bvs
       where
-        bvs = x:|xs
+        -- We do this because there is currently no Arbitrary inctance for NonEmpty
+        bvs = let x:xs = getNonEmpty nel
+              in  x:|xs
 
 
 bitVectorProperties :: TestTree
