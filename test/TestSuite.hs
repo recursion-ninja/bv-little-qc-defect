@@ -7,6 +7,7 @@ import Data.BitVector.LittleEndian
 import Data.Functor.Compose
 import Data.Functor.Identity
 import Data.Hashable
+import Data.List.NonEmpty (NonEmpty(..))
 import Data.Monoid ()
 import Data.MonoTraversable
 import Data.Semigroup
@@ -267,7 +268,7 @@ monoidProperties :: TestTree
 monoidProperties = testGroup "Properties of a Monoid"
     [ testProperty "left identity"   leftIdentity
     , testProperty "right identity" rightIdentity
-    , testProperty "(<>) is associative" operationAssocativity
+    , testProperty "mempty is associative" operationAssocativity
     , testProperty "mconcat === foldr (<>) mempty" foldableApplication
     ]
   where
@@ -284,8 +285,8 @@ monoidProperties = testGroup "Properties of a Monoid"
         a `mappend` (b `mappend` c) === (a `mappend` b) `mappend` c
 
     foldableApplication :: [BitVector] -> Property
-    foldableApplication bv = 
-        mconcat bv === foldr mappend mempty bv
+    foldableApplication bvs = 
+        mconcat bvs === foldr mappend mempty bvs
 
 
 monoTraversableProperties :: TestTree
@@ -333,11 +334,18 @@ semigroupProperties :: TestTree
 semigroupProperties = testGroup "Properties of a Semigroup"
     [ localOption (QuickCheckTests 10000)
         $ testProperty "(<>) is associative" operationAssocativity
+    , testProperty "sconcat === foldr1 (<>)" foldableApplication
     ]
   where
     operationAssocativity :: BitVector -> BitVector -> BitVector -> Property
     operationAssocativity a b c =
         a <> (b <> c) === (a <> b) <> c
+
+    foldableApplication :: NonEmptyList BitVector -> Property
+    foldableApplication (NonEmptyList (x:xs)) =
+        sconcat bvs === foldr1 mappend bvs
+      where
+        bvs = x:|xs
 
 
 bitVectorProperties :: TestTree
