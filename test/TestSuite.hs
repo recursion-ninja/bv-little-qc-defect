@@ -335,6 +335,7 @@ semigroupProperties = testGroup "Properties of a Semigroup"
     [ localOption (QuickCheckTests 10000)
         $ testProperty "(<>) is associative" operationAssocativity
     , testProperty "sconcat === foldr1 (<>)" foldableApplication
+    , testProperty "stimes n === mconcat . replicate n" repeatedApplication
     ]
   where
     operationAssocativity :: BitVector -> BitVector -> BitVector -> Property
@@ -348,6 +349,10 @@ semigroupProperties = testGroup "Properties of a Semigroup"
         -- We do this because there is currently no Arbitrary inctance for NonEmpty
         bvs = let x:xs = getNonEmpty nel
               in  x:|xs
+
+    repeatedApplication :: (NonNegative Int) -> BitVector -> Property
+    repeatedApplication (NonNegative i) bv =
+        stimes i bv === (mconcat . replicate i) bv
 
 
 bitVectorProperties :: TestTree
