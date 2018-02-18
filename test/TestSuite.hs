@@ -34,29 +34,35 @@ testSuite = testGroup "BitVector tests"
 
 bitsTests :: TestTree
 bitsTests = testGroup "Bits instance properties"
-    [ testProperty "∀ n ≥ 0, clearBit zeroBits n === zeroBits" zeroBitsAndClearBit
-    , testProperty "∀ n ≥ 0, setBit   zeroBits n === bit n" zeroBitsAndSetBit
-    , testProperty "∀ n ≥ 0, testBit  zeroBits n === False" zeroBitsAndTestBit
+    [ testProperty "∀ i ≥ 0, clearBit zeroBits i === zeroBits" zeroBitsAndClearBit
+    , testProperty "∀ i ≥ 0, setBit   zeroBits i === bit i" zeroBitsAndSetBit
+    , testProperty "∀ i ≥ 0, testBit  zeroBits i === False" zeroBitsAndTestBit
     , testCase     "         popCount zeroBits   === 0" zeroBitsAndPopCount
     , testProperty "complement === omap not" complementOmapNot
-    , testProperty "(`setBit` n) === (.|. bit n)" setBitDefinition
-    , testProperty "(`clearBit` n) === (.&. complement (bit n))" clearBitDefinition
-    , testProperty "(`complementBit` n) === (`xor` bit n)" complementBitDefinition
-    , testProperty "(`testBit` n) . (`setBit` n)" testBitAndSetBit
-    , testProperty "not  . (`testBit` n) . (`clearBit` n)" testBitAndClearBit
+    , testProperty "(`setBit` i) === (.|. bit i)" setBitDefinition
+    , testProperty "(`clearBit` i) === (.&. complement (bit i))" clearBitDefinition
+    , testProperty "(`complementBit` i) === (`xor` bit i)" complementBitDefinition
+    , testProperty "(`testBit` i) . (`setBit` n)" testBitAndSetBit
+    , testProperty "not  . (`testBit` i) . (`clearBit` i)" testBitAndClearBit
+    , testProperty "(`shiftL`  i) === (`shift`   i)" leftShiftPositiveShift
+    , testProperty "(`shiftR`  i) === (`shift`  -i)" rightShiftNegativeShift
+    , testProperty "(`rotateL` i) === (`rotate`  i)" leftRotatePositiveRotate
+    , testProperty "(`rotateR` i) === (`rotate` -i)" rightRotateNegativeRotate
+    , testProperty "(`rotateR` i) . (`rotateL` i) === id" leftRightRotateIdentity
+    , testProperty "(`rotateL` i) . (`rotateR` i) === id" rightLeftRotateIdentity
     ]
   where
     zeroBitsAndClearBit :: NonNegative Int -> Property
-    zeroBitsAndClearBit (NonNegative n) =
-        clearBit (zeroBits :: BitVector) n === zeroBits
+    zeroBitsAndClearBit (NonNegative i) =
+        clearBit (zeroBits :: BitVector) i === zeroBits
 
     zeroBitsAndSetBit :: NonNegative Int -> Property
-    zeroBitsAndSetBit (NonNegative n) =
-        setBit   (zeroBits :: BitVector) n === bit n
+    zeroBitsAndSetBit (NonNegative i) =
+        setBit   (zeroBits :: BitVector) i === bit i
 
     zeroBitsAndTestBit :: NonNegative Int -> Property
-    zeroBitsAndTestBit (NonNegative n) =
-        testBit  (zeroBits :: BitVector) n === False
+    zeroBitsAndTestBit (NonNegative i) =
+        testBit  (zeroBits :: BitVector) i === False
 
     zeroBitsAndPopCount :: Assertion
     zeroBitsAndPopCount =
@@ -67,32 +73,58 @@ bitsTests = testGroup "Bits instance properties"
         complement bv === omap not bv
 
     setBitDefinition :: (NonNegative Int, BitVector) -> Property
-    setBitDefinition (NonNegative n, bv) =
-        bv `setBit` n === bv .|. bit n
+    setBitDefinition (NonNegative i, bv) =
+        bv `setBit` i === bv .|. bit i
 
     clearBitDefinition :: (NonNegative Int, BitVector) -> Property
-    clearBitDefinition (NonNegative n, bv) =
-        n < (fromEnum . dimension) bv ==>
-          (bv `clearBit` n === bv .&. complement  (zed .|. bit n))
+    clearBitDefinition (NonNegative i, bv) =
+        i < (fromEnum . dimension) bv ==>
+          (bv `clearBit` i === bv .&. complement  (zed .|. bit i))
       where
         zed = fromNumber (dimension bv) (0 :: Integer)
 
     complementBitDefinition :: (NonNegative Int, BitVector) -> Property
-    complementBitDefinition (NonNegative n, bv) =
-        bv `complementBit` n === bv `xor` bit n
+    complementBitDefinition (NonNegative i, bv) =
+        bv `complementBit` i === bv `xor` bit i
 
     testBitAndSetBit :: (NonNegative Int, BitVector) -> Bool
-    testBitAndSetBit (NonNegative n, bv) =
-        ((`testBit` n) . (`setBit` n)) bv
+    testBitAndSetBit (NonNegative i, bv) =
+        ((`testBit` i) . (`setBit` i)) bv
 
     testBitAndClearBit :: (NonNegative Int, BitVector) -> Bool
-    testBitAndClearBit (NonNegative n, bv) =
-        (not  . (`testBit` n) . (`clearBit` n)) bv
+    testBitAndClearBit (NonNegative i, bv) =
+        (not  . (`testBit` i) . (`clearBit` i)) bv
+
+    leftShiftPositiveShift :: NonNegative Int -> BitVector -> Property
+    leftShiftPositiveShift (NonNegative i) bv =
+        bv `shiftL` i === bv `shift` i
+        
+    rightShiftNegativeShift :: NonNegative Int -> BitVector -> Property
+    rightShiftNegativeShift (NonNegative i) bv =
+        bv `shiftR` i === bv `shift` (-i)
+        
+    leftRotatePositiveRotate :: NonNegative Int -> BitVector -> Property
+    leftRotatePositiveRotate (NonNegative i) bv =
+        bv `rotateL` i === bv `rotate` i
+
+    rightRotateNegativeRotate :: NonNegative Int -> BitVector -> Property
+    rightRotateNegativeRotate (NonNegative i) bv =
+        bv `rotateR` i === bv `rotate` (-i)
+       
+    leftRightRotateIdentity :: NonNegative Int -> BitVector -> Property
+    leftRightRotateIdentity (NonNegative i) bv =
+        ((`rotateR` i) . (`rotateL` i)) bv === bv
+
+    rightLeftRotateIdentity :: NonNegative Int -> BitVector -> Property
+    rightLeftRotateIdentity (NonNegative i) bv =
+        ((`rotateL` i) . (`rotateR` i)) bv === bv
 
 
 finiteBitsTests :: TestTree
 finiteBitsTests = testGroup "FiniteBits instance consistency"
-    [ testProperty "fromEnum . dimension === finiteBitSize" finiteBitSizeIsDimension
+    [ testProperty "bitSize == finiteBitSize" finiteBitSizeIsBitSize
+    , testProperty "bitSizeMaybe == Just . finiteBitSize" finiteBitSizeIsBitSizeMaybe
+    , testProperty "fromEnum . dimension === finiteBitSize" finiteBitSizeIsDimension
     , testProperty "length . toBits === finiteBitSize" finiteBitSizeIsBitLength
     , testProperty "length . takeWhile not === countLeadingZeros . fromBits" countLeadingZeroAndFromBits
     , testProperty "length . takeWhile not . toBits === countLeadingZeros" countLeadingZeroAndToBits
@@ -100,29 +132,37 @@ finiteBitsTests = testGroup "FiniteBits instance consistency"
     , testProperty "length . takeWhile not . reverse . toBits === countTrailingZeros" countTrailingZeroAndToBits
     ]
   where
+    finiteBitSizeIsBitSize :: BitVector -> Property
+    finiteBitSizeIsBitSize bv =
+        bitSize bv === finiteBitSize bv
+
+    finiteBitSizeIsBitSizeMaybe :: BitVector -> Property
+    finiteBitSizeIsBitSizeMaybe bv =
+        bitSizeMaybe bv === (Just . finiteBitSize) bv
+    
     finiteBitSizeIsDimension :: BitVector -> Property
     finiteBitSizeIsDimension bv =
-      (fromEnum . dimension) bv === finiteBitSize bv
+        (fromEnum . dimension) bv === finiteBitSize bv
 
     finiteBitSizeIsBitLength :: BitVector -> Property
     finiteBitSizeIsBitLength bv =
-      (length . toBits) bv === finiteBitSize bv
+        (length . toBits) bv === finiteBitSize bv
 
     countLeadingZeroAndFromBits :: [Bool] -> Property
     countLeadingZeroAndFromBits bs =
-      (length . takeWhile not) bs === (countLeadingZeros . fromBits) bs
+        (length . takeWhile not) bs === (countLeadingZeros . fromBits) bs
 
     countLeadingZeroAndToBits :: BitVector -> Property
     countLeadingZeroAndToBits bv =
-      (length . takeWhile not . toBits) bv === countLeadingZeros bv
+        (length . takeWhile not . toBits) bv === countLeadingZeros bv
 
     countTrailingZeroAndFromBits :: [Bool] -> Property
     countTrailingZeroAndFromBits bs =
-      (length . takeWhile not . reverse) bs === (countTrailingZeros . fromBits) bs
+        (length . takeWhile not . reverse) bs === (countTrailingZeros . fromBits) bs
 
     countTrailingZeroAndToBits :: BitVector -> Property
     countTrailingZeroAndToBits bv =
-      (length . takeWhile not . reverse . toBits) bv === countTrailingZeros bv
+       (length . takeWhile not . reverse . toBits) bv === countTrailingZeros bv
 
 
 monoFunctorProperties :: TestTree
@@ -132,10 +172,12 @@ monoFunctorProperties = testGroup "Properites of a MonoFunctor"
     ]
   where
     omapId :: BitVector -> Property
-    omapId bv = omap id bv === id bv
+    omapId bv =
+        omap id bv === id bv
 
     omapComposition :: (Blind (Bool -> Bool), Blind (Bool -> Bool), BitVector) -> Property
-    omapComposition (Blind f, Blind g, bv) = omap (f . g) bv ===  (omap f . omap g) bv
+    omapComposition (Blind f, Blind g, bv) =
+        omap (f . g) bv ===  (omap f . omap g) bv
 
 
 monoFoldableProperties :: TestTree
@@ -215,10 +257,12 @@ monoidProperties = testGroup "Properties of a Monoid"
     ]
   where
     leftIdentity :: BitVector -> Property
-    leftIdentity a = mempty <> a === a
+    leftIdentity a =
+        mempty <> a === a
 
     rightIdentity :: BitVector -> Property
-    rightIdentity a = a <> mempty === a
+    rightIdentity a =
+        a <> mempty === a
 
 
 monoTraversableProperties :: TestTree
@@ -283,6 +327,7 @@ bitVectorProperties = testGroup "BitVector properties"
     , testProperty "isZeroVector === all not . toBits" zeroVectorAndAllBitsOff
     , testProperty "(0 ==) . toUnsignedNumber ==> isZeroVector" toUnsignedNumImpliesZeroVector
     , testProperty "toSignedNumber . fromNumber === id" bitVectorUnsignedNumIdentity
+    , testProperty "isSigned == const False" noSignBitVector
     ]
   where
     otoListTest :: BitVector -> Property
@@ -321,3 +366,10 @@ bitVectorProperties = testGroup "BitVector properties"
         (toSignedNumber . fromNumber width) num === num
       where
         width = succ . succ . ceiling . logBase (2.0 :: Double) . fromIntegral $ abs num
+
+
+    noSignBitVector :: BitVector -> Property
+    noSignBitVector bv =
+        isSigned bv === False
+
+    

@@ -141,7 +141,7 @@ instance Bits BitVector where
     {-# INLINE testBit #-}
     testBit (BV w n) i = i >= 0 && i < w && n `testBit` i
   
-    bitSize = undefined
+    bitSize (BV w _) = w
 
     {-# INLINE bitSizeMaybe #-}
     bitSizeMaybe (BV w _) = Just w
@@ -161,7 +161,8 @@ instance Bits BitVector where
 
     {-# INLINE rotateL #-}
     rotateL bv       0 = bv
-    rotateL (BV w n) k
+    rotateL bv@(BV w n) k
+      | 0 == w    = bv
       | k == w    = BV w n
       | k >  w    = rotateL (BV w n) (k `mod` w)
       | otherwise = BV w $ h + l
@@ -172,8 +173,9 @@ instance Bits BitVector where
 
     {-# INLINE rotateR #-}
     rotateR bv       0 = bv
-    rotateR (BV w n) k
-      | k == w    = BV w n
+    rotateR bv@(BV w n) k
+      | 0 == w    = bv
+      | k == w    = bv
       | k >  w    = rotateR (BV w n) (k `mod` w)
       | otherwise = BV w $ h + l
       where
