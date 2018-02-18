@@ -72,27 +72,27 @@ bitsTests = testGroup "Bits instance properties"
     complementOmapNot bv =
         complement bv === omap not bv
 
-    setBitDefinition :: (NonNegative Int, BitVector) -> Property
-    setBitDefinition (NonNegative i, bv) =
+    setBitDefinition :: NonNegative Int -> BitVector -> Property
+    setBitDefinition (NonNegative i) bv =
         bv `setBit` i === bv .|. bit i
 
-    clearBitDefinition :: (NonNegative Int, BitVector) -> Property
-    clearBitDefinition (NonNegative i, bv) =
+    clearBitDefinition :: NonNegative Int -> BitVector -> Property
+    clearBitDefinition (NonNegative i) bv =
         i < (fromEnum . dimension) bv ==>
           (bv `clearBit` i === bv .&. complement  (zed .|. bit i))
       where
         zed = fromNumber (dimension bv) (0 :: Integer)
 
-    complementBitDefinition :: (NonNegative Int, BitVector) -> Property
-    complementBitDefinition (NonNegative i, bv) =
+    complementBitDefinition :: NonNegative Int -> BitVector -> Property
+    complementBitDefinition (NonNegative i) bv =
         bv `complementBit` i === bv `xor` bit i
 
-    testBitAndSetBit :: (NonNegative Int, BitVector) -> Bool
-    testBitAndSetBit (NonNegative i, bv) =
+    testBitAndSetBit :: NonNegative Int -> BitVector -> Bool
+    testBitAndSetBit (NonNegative i) bv =
         ((`testBit` i) . (`setBit` i)) bv
 
-    testBitAndClearBit :: (NonNegative Int, BitVector) -> Bool
-    testBitAndClearBit (NonNegative i, bv) =
+    testBitAndClearBit :: NonNegative Int -> BitVector -> Bool
+    testBitAndClearBit (NonNegative i) bv =
         (not  . (`testBit` i) . (`clearBit` i)) bv
 
     leftShiftPositiveShift :: NonNegative Int -> BitVector -> Property
@@ -175,8 +175,8 @@ monoFunctorProperties = testGroup "Properites of a MonoFunctor"
     omapId bv =
         omap id bv === id bv
 
-    omapComposition :: (Blind (Bool -> Bool), Blind (Bool -> Bool), BitVector) -> Property
-    omapComposition (Blind f, Blind g, bv) =
+    omapComposition :: Blind (Bool -> Bool) -> Blind (Bool -> Bool) -> BitVector -> Property
+    omapComposition (Blind f) (Blind g) bv =
         omap (f . g) bv ===  (omap f . omap g) bv
 
 
@@ -197,36 +197,36 @@ monoFoldableProperties = testGroup "Properties of MonoFoldable"
     , testProperty "oelem e /== onotElem e" testInclusionConsistency
     ]
   where
-    testFoldrFoldMap :: (Blind (Bool -> Word -> Word), Word, BitVector) -> Property
-    testFoldrFoldMap (Blind f, z, bv) =
+    testFoldrFoldMap :: Blind (Bool -> Word -> Word) -> Word -> BitVector -> Property
+    testFoldrFoldMap (Blind f) z bv =
         ofoldr f z bv === appEndo (ofoldMap (Endo . f) bv) z
 
-    testFoldlFoldMap :: (Blind (Word -> Bool -> Word), Word, BitVector) -> Property
-    testFoldlFoldMap (Blind f, z, bv) =
+    testFoldlFoldMap :: Blind (Word -> Bool -> Word) -> Word -> BitVector -> Property
+    testFoldlFoldMap (Blind f) z bv =
         ofoldl' f z bv === appEndo (getDual (ofoldMap (Dual . Endo . flip f) bv)) z
 
-    testFoldr :: (Blind (Bool -> Word -> Word), Word, BitVector) -> Property
-    testFoldr (Blind f, z, bv) =
+    testFoldr :: Blind (Bool -> Word -> Word) -> Word -> BitVector -> Property
+    testFoldr (Blind f) z bv =
         ofoldr f z bv === (ofoldr f z . otoList) bv
 
-    testFoldl :: (Blind (Word -> Bool -> Word), Word, BitVector) -> Property
-    testFoldl (Blind f, z, bv) =
+    testFoldl :: Blind (Word -> Bool -> Word) -> Word -> BitVector -> Property
+    testFoldl (Blind f) z bv =
         ofoldl' f z bv === (ofoldl' f z . otoList) bv
 
-    testFoldr1 :: (Blind (Bool -> Bool -> Bool), BitVector) -> Property
-    testFoldr1 (Blind f, bv) =
+    testFoldr1 :: Blind (Bool -> Bool -> Bool) -> BitVector -> Property
+    testFoldr1 (Blind f) bv =
         (not . onull) bv  ==> ofoldr1Ex f bv === (ofoldr1Ex f . otoList) bv
 
-    testFoldl1 :: (Blind (Bool -> Bool -> Bool), BitVector) -> Property
-    testFoldl1 (Blind f, bv) =
+    testFoldl1 :: Blind (Bool -> Bool -> Bool) -> BitVector -> Property
+    testFoldl1 (Blind f) bv =
         (not . onull) bv  ==> ofoldl1Ex' f bv === (ofoldl1Ex' f . otoList) bv
 
-    testAll :: (Blind (Bool -> Bool), BitVector) -> Property
-    testAll (Blind f, bv) =
+    testAll :: Blind (Bool -> Bool) -> BitVector -> Property
+    testAll (Blind f) bv =
         oall f bv === (getAll . ofoldMap (All . f)) bv
 
-    testAny :: (Blind (Bool -> Bool), BitVector) -> Property
-    testAny (Blind f, bv) =
+    testAny :: Blind (Bool -> Bool) -> BitVector -> Property
+    testAny (Blind f) bv =
         oany f bv === (getAny . ofoldMap (Any . f)) bv
 
     testLength :: BitVector -> Property
@@ -272,16 +272,16 @@ monoTraversableProperties = testGroup "Properties of MonoTraversable"
     , testProperty "otraverse (Compose . fmap g . f) === Compose . fmap (otraverse g) . otraverse f" testComposition
     ]
   where
-    testNaturality :: (Blind (Bool -> [Bool]), BitVector) -> Property
-    testNaturality (Blind f, bv) =
+    testNaturality :: Blind (Bool -> [Bool]) -> BitVector -> Property
+    testNaturality (Blind f) bv =
         (headMay . otraverse f) bv === otraverse (headMay . f) bv
 
     testIdentity :: BitVector -> Property
     testIdentity bv =
         otraverse Identity bv === Identity bv
 
-    testComposition :: (Blind (Bool -> Either Word Bool), Blind (Bool -> Maybe Bool), BitVector) -> Property
-    testComposition (Blind f, Blind g, bv) =
+    testComposition :: Blind (Bool -> Either Word Bool) -> Blind (Bool -> Maybe Bool) -> BitVector -> Property
+    testComposition (Blind f) (Blind g) bv =
         otraverse (Compose . fmap g . f) bv === (Compose . fmap (otraverse g) . otraverse f) bv
 
 
@@ -291,16 +291,16 @@ orderingProperties = testGroup "Properties of an Ordering"
     , testProperty "ordering is transitive (total)" transitivity
     ]
   where
-    symetry :: (BitVector, BitVector) -> Bool
-    symetry (lhs, rhs) =
+    symetry :: BitVector -> BitVector -> Bool
+    symetry lhs rhs =
         case (lhs `compare` rhs, rhs `compare` lhs) of
           (EQ, EQ) -> True
           (GT, LT) -> True
           (LT, GT) -> True
           _        -> False
 
-    transitivity :: (BitVector, BitVector, BitVector) -> Property
-    transitivity (a, b, c) = caseOne .||. caseTwo
+    transitivity :: BitVector -> BitVector -> BitVector -> Property
+    transitivity a b c = caseOne .||. caseTwo
       where
         caseOne = (a <= b && b <= c) ==> a <= c
         caseTwo = (a >= b && b >= c) ==> a >= c
@@ -312,8 +312,9 @@ semigroupProperties = testGroup "Properties of a Semigroup"
         $ testProperty "(<>) is associative" operationAssocativity
     ]
   where
-    operationAssocativity :: (BitVector, BitVector, BitVector) -> Property
-    operationAssocativity (a, b, c) = a <> (b <> c) === (a <> b) <> c
+    operationAssocativity :: BitVector -> BitVector -> BitVector -> Property
+    operationAssocativity a b c =
+        a <> (b <> c) === (a <> b) <> c
 
 
 bitVectorProperties :: TestTree
@@ -366,7 +367,6 @@ bitVectorProperties = testGroup "BitVector properties"
         (toSignedNumber . fromNumber width) num === num
       where
         width = succ . succ . ceiling . logBase (2.0 :: Double) . fromIntegral $ abs num
-
 
     noSignBitVector :: BitVector -> Property
     noSignBitVector bv =
