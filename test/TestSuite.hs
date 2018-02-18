@@ -6,6 +6,7 @@ import Data.Bits
 import Data.BitVector.LittleEndian
 import Data.Functor.Compose
 import Data.Functor.Identity
+import Data.Hashable
 import Data.Monoid ()
 import Data.MonoTraversable
 import Data.Semigroup
@@ -22,6 +23,7 @@ testSuite :: TestTree
 testSuite = testGroup "BitVector tests"
     [ bitsTests
     , finiteBitsTests
+    , hashableTests
     , monoFunctorProperties
     , monoFoldableProperties
     , monoidProperties
@@ -33,7 +35,7 @@ testSuite = testGroup "BitVector tests"
 
 
 bitsTests :: TestTree
-bitsTests = testGroup "Bits instance properties"
+bitsTests = testGroup "Properties of Bits"
     [ testProperty "∀ i ≥ 0, clearBit zeroBits i === zeroBits" zeroBitsAndClearBit
     , testProperty "∀ i ≥ 0, setBit   zeroBits i === bit i" zeroBitsAndSetBit
     , testProperty "∀ i ≥ 0, testBit  zeroBits i === False" zeroBitsAndTestBit
@@ -121,7 +123,7 @@ bitsTests = testGroup "Bits instance properties"
 
 
 finiteBitsTests :: TestTree
-finiteBitsTests = testGroup "FiniteBits instance consistency"
+finiteBitsTests = testGroup "Properties of FiniteBits"
     [ testProperty "bitSize == finiteBitSize" finiteBitSizeIsBitSize
     , testProperty "bitSizeMaybe == Just . finiteBitSize" finiteBitSizeIsBitSizeMaybe
     , testProperty "fromEnum . dimension === finiteBitSize" finiteBitSizeIsDimension
@@ -165,6 +167,17 @@ finiteBitsTests = testGroup "FiniteBits instance consistency"
        (length . takeWhile not . reverse . toBits) bv === countTrailingZeros bv
 
 
+hashableTests :: TestTree
+hashableTests = testGroup "Properties of Hashable"
+    [ localOption (QuickCheckTests 10000)
+        $ testProperty "a == b ==> (hashWithSalt a) === (hashWithSalt b)" differentSaltsDifferentHashes
+    ]
+  where
+    differentSaltsDifferentHashes :: BitVector -> Int -> Int -> Property
+    differentSaltsDifferentHashes bv salt1 salt2 =
+        salt1 /= salt2 ==> (hashWithSalt salt1 bv) /= (hashWithSalt salt2 bv)
+ 
+    
 monoFunctorProperties :: TestTree
 monoFunctorProperties = testGroup "Properites of a MonoFunctor"
     [ testProperty "omap id === id" omapId
@@ -252,17 +265,27 @@ monoFoldableProperties = testGroup "Properties of MonoFoldable"
 
 monoidProperties :: TestTree
 monoidProperties = testGroup "Properties of a Monoid"
-    [ testProperty "left identity" leftIdentity
+    [ testProperty "left identity"   leftIdentity
     , testProperty "right identity" rightIdentity
+    , testProperty "(<>) is associative" operationAssocativity
+    , testProperty "mconcat === foldr (<>) mempty" foldableApplication
     ]
   where
     leftIdentity :: BitVector -> Property
     leftIdentity a =
-        mempty <> a === a
+        mempty `mappend` a === a
 
     rightIdentity :: BitVector -> Property
     rightIdentity a =
-        a <> mempty === a
+        a `mappend` mempty === a
+
+    operationAssocativity :: BitVector -> BitVector -> BitVector -> Property
+    operationAssocativity a b c =
+        a `mappend` (b `mappend` c) === (a `mappend` b) `mappend` c
+
+    foldableApplication :: [BitVector] -> Property
+    foldableApplication bv = 
+        mconcat bv === foldr mappend mempty bv
 
 
 monoTraversableProperties :: TestTree
@@ -347,6 +370,10 @@ bitVectorProperties = testGroup "BitVector properties"
     toBitsFromBits bv =
         (fromBits . toBits) bv === bv
 
+    zeroBitsIsZeroVector :: Assertion
+    zeroBitsIsZeroVector =
+        assertBool "zeroBits is not a 'zero vector'" $ isZeroVector zeroBits
+
     popCountAndZeroVector :: BitVector -> Property
     popCountAndZeroVector bv =
         isZeroVector bv === ((0 ==) . popCount) bv
@@ -359,9 +386,6 @@ bitVectorProperties = testGroup "BitVector properties"
     toUnsignedNumImpliesZeroVector bv =
         ((0 ==) . (toUnsignedNumber :: BitVector -> Integer)) bv ==> isZeroVector bv
 
-    zeroBitsIsZeroVector :: Assertion
-    zeroBitsIsZeroVector = assertBool "zeroBits is not a 'zero vector'" $ isZeroVector zeroBits
-
     bitVectorUnsignedNumIdentity :: Integer -> Property
     bitVectorUnsignedNumIdentity num =
         (toSignedNumber . fromNumber width) num === num
@@ -372,4 +396,3 @@ bitVectorProperties = testGroup "BitVector properties"
     noSignBitVector bv =
         isSigned bv === False
 
-    

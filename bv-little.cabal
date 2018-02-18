@@ -103,6 +103,7 @@ Test-Suite test-suite
 
   build-depends:      base             >= 4.5.1 && < 4.11.1
                     , bv-little
+                    , hashable
                     , mono-traversable
                     , QuickCheck
                     , tasty

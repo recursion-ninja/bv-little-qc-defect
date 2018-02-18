@@ -246,7 +246,7 @@ instance Hashable BitVector where
 
     hash (BV w n) = w `hashWithSalt` hash n
 
-    hashWithSalt salt bv = salt `hashWithSalt` bv
+    hashWithSalt salt bv = salt `hashWithSalt` hash bv
 
 
 -- |
