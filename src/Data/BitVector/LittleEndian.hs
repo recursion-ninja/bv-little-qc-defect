@@ -10,15 +10,13 @@
 --
 -- A bit vector similar to @Data.BitVector@ from the
 -- <https://hackage.haskell.org/package/bv bv>, however the endianness is
--- reversed. This module defines /little-endian/ pseudo size-polymorphic
--- bit-vectors.
+-- reversed. This module defines /little-endian/ pseud--size-polymorphic
+-- bit vectors.
 --
 -- Little-endian bit vectors are isomorphic to a @[Bool]@ with the /least/
 -- significant bit at the head of the list and the /most/ significant bit at the
--- end of the list.
---
--- Consequently, the endian-ness of a bit-vector affects the semantics of the
--- following type-classes:
+-- end of the list. Consequently, the endianness of a bit vector affects the semantics of the
+-- following type classes:
 --
 --   * 'Bits'
 --   * 'FiniteBits'
@@ -27,13 +25,13 @@
 --   * 'MonoFoldable'
 --   * 'MonoTraversable'
 --
--- If you want bit-vectors which are isomorphic to a @[Bool]@ with the /most/
+-- For bit vectors which are isomorphic to a @[Bool]@ with the /most/
 -- significant bit at the head of the list and the /least/ significant bit at the
--- end of the list, then you should use the
--- <https://hackage.haskell.org/package/bv bv> package instead of this package.
+-- end of the list, use the
+-- <https://hackage.haskell.org/package/bv bv> package.
 --
 -- This module does /not/ define numeric instances for 'BitVector'. This is 
--- intentional! If you want to interact with a bit-vector as an 'Integral' value,
+-- intentional! To interact with a bit vector as an 'Integral' value,
 -- convert the 'BitVector' using either 'toSignedNumber' or 'toUnsignedNumber'.
 --
 -----------------------------------------------------------------------------
@@ -77,11 +75,11 @@ import Test.QuickCheck (Arbitrary(..), CoArbitrary(..), NonNegative(..), suchTha
 
 
 -- |
--- A little-endian bit-vector of non-negative dimension.
+-- A little-endian bit vector of non-negative dimension.
 data  BitVector
     = BV
-    { dim :: {-# UNPACK #-} !Int -- ^ The /dimension/ of a bit-vector.
-    , nat :: !Integer            -- ^ The value of a bit-vector, as a natural number.
+    { dim :: {-# UNPACK #-} !Int -- ^ The /dimension/ of a bit vector.
+    , nat :: !Integer            -- ^ The value of a bit vector, as a natural number.
     } deriving ( Data
                , Generic
                , Typeable
@@ -370,7 +368,7 @@ instance Show BitVector where
 
 
 -- | 
--- Create a bit-vector from a /little-endian/ list of bits.
+-- Create a bit vector from a /little-endian/ list of bits.
 --
 -- The following will hold:
 --
@@ -397,7 +395,7 @@ fromBits bs = BV n k
 
 
 -- | 
--- Create a /little-endian/ list of bits from a bit-vector.
+-- Create a /little-endian/ list of bits from a bit vector.
 --
 -- The following will hold:
 --
@@ -418,19 +416,19 @@ toBits (BV w n) = testBit n <$> [ 0 .. w - 1 ]
 
 
 -- |
--- Create a bit-vector of non-negative dimension from an integral value.
+-- Create a bit vector of non-negative dimension from an integral value.
 --
 -- The integral value will be treated as an /signed/ number and the resulting
--- bit-vector will contain the two's complement bit representation of the number.
+-- bit vector will contain the two's complement bit representation of the number.
 --
 -- The integral value will be interpreted as /little-endian/ so that the least
 -- significant bit of the integral value will be the value of the 0th index of 
--- the resulting bit-vector, and the most significant bit of the integral value
--- will be at index @dimension - 1@.
+-- the resulting bit vector and the most significant bit of the integral value
+-- will be at index @dimension --1@.
 --
 -- Note that if the bit representation of the integral value exceeds the
 -- supplied dimension, then the most significant bits will be truncated in the
--- resulting bit-vector.
+-- resulting bit vector.
 --
 -- /Time:/ \(\, \mathcal{O} \left( 1 \right) \)
 --
@@ -449,7 +447,7 @@ toBits (BV w n) = testBit n <$> [ 0 .. w - 1 ]
 {-# INLINE fromNumber #-}
 fromNumber
   :: Integral v 
-  => Word  -- ^ dimension of bit-vector
+  => Word  -- ^ dimension of bit vector
   -> v     -- ^ /signed, little-endian/ integral value
   -> BitVector
 fromNumber !dimValue !intValue = BV width $ mask .&. v
@@ -464,7 +462,7 @@ fromNumber !dimValue !intValue = BV width $ mask .&. v
 
 
 -- |
--- 2's complement value of a bit-vector.
+-- Two's complement value of a bit vector.
 --
 -- /Time:/ \(\, \mathcal{O} \left( 1 \right) \)
 --
@@ -498,7 +496,7 @@ toSignedNumber (BV w n) = fromInteger v
 
 
 -- | 
--- Unsigned value of a bit-vector.
+-- Unsigned value of a bit vector.
 --
 -- /Time:/ \(\, \mathcal{O} \left( 1 \right) \)
 --
@@ -529,7 +527,7 @@ toUnsignedNumber = fromInteger . nat
 
 
 -- |
--- Get the dimension of a 'BitVector'. Preferable over 'finiteBitSize' as it
+-- Get the dimension of a 'BitVector'. Preferable to 'finiteBitSize' as it
 -- returns a type which cannot represent a non-negative value and a 'BitVector'
 -- must have a non-negative dimension.
 --
@@ -572,9 +570,9 @@ isZeroVector = (0 ==) . nat
 -- |
 -- Get the /inclusive/ range of bits in 'BitVector' as a new 'BitVector'.
 --
--- If either of the bounds of the sub range exceed the bit-vector's dimension,
--- the resulting sub range will append an infinite number of zeroes to the end
--- of the bit-vector in order to satisfy the sub range request.
+-- If either of the bounds of the subrange exceed the bit vector's dimension,
+-- the resulting subrange will append an infinite number of zeroes to the end
+-- of the bit vector in order to satisfy the subrange request.
 --
 -- /Time:/ \(\, \mathcal{O} \left( 1 \right) \)
 --
@@ -604,4 +602,3 @@ subRange (!lower, !upper) (BV _ n)
   where
     i = fromEnum lower
     m = fromEnum $ upper - lower + 1
-
