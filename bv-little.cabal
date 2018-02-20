@@ -11,22 +11,20 @@ bug-reports:         https://github.com/recursion-ninja/bv-little/issues
 copyright:           (c) Alex Washburn 2018
 description:
   .
-  This package contains a time & space efficient implementation of little-endian
-  bit-vectors. Provides implementations of applicable type-classes and numeric 
-  conversions.
+  This package contains a time- and space- efficient implementation of little-endian bit vectors. Provides implementations of applicable type classes and numeric conversions.
   .
   The declared cost of each operation is either worst-case or amortized.
   .
-  If you need /big-endian/ bit-vectors, use the <https://hackage.haskell.org/package/bv bv> package instead of this one.
-    
+  For an implementation of /big-endian/ bit vectors, use the <https://hackage.haskell.org/package/bv bv> package.
+
 build-type:          Simple
 cabal-version:       >= 1.22
-                     
+
 tested-with:         GHC == 8.4.1
                      GHC == 8.2.2
                      GHC == 8.0.2
                      GHC == 7.10.3
-             
+
 extra-source-files:  changelog.md
                      README.md
                      stack.yaml
@@ -35,7 +33,7 @@ source-repository head
   type:     git
   location: https://github.com/recursion-ninja/bv-little
 
-                      
+
 library
 
   build-depends:      base             >= 4.5.1 && < 4.11.1
@@ -49,13 +47,13 @@ library
   if !impl(ghc >= 8.0)
 
     build-depends:    semigroups
-  
+
   default-language: Haskell2010
 
   exposed-modules:  Data.BitVector.LittleEndian
-    
+
   ghc-options:      -O2
-                    
+
                     -- Sanity check warnings
                     -Wall
                     -fwarn-dodgy-foreign-imports
@@ -76,15 +74,15 @@ library
                     -fwarn-unused-do-bind
                     -fwarn-unused-imports
                     -fwarn-unused-matches
-                    -fwarn-wrong-do-bind  
+                    -fwarn-wrong-do-bind
 
   if impl(ghc >= 7.8)
-   
+
     ghc-options:    -fwarn-empty-enumerations
                     -fwarn-overflowed-literals
 
   if impl(ghc >= 8.0)
-   
+
     ghc-options:    -Wcompat
                     -fwarn-noncanonical-monoid-instances
                     -fwarn-redundant-constraints
@@ -94,7 +92,7 @@ library
 
   hs-source-dirs:   src
 
-                       
+
 Test-Suite test-suite
 
   type:             exitcode-stdio-1.0
@@ -114,7 +112,7 @@ Test-Suite test-suite
 
     build-depends:    semigroups
                     , transformers
-  
+
   default-language: Haskell2010
 
   hs-source-dirs:   test
@@ -125,7 +123,7 @@ benchmark benchmark-suite
   type:             exitcode-stdio-1.0
 
   main-is:          Benchmarks.hs
-                      
+
   build-depends:      base             >= 4.5.1 && < 4.11.1
                     , bv-little
                     , criterion
@@ -134,7 +132,7 @@ benchmark benchmark-suite
   if !impl(ghc >= 8.0)
 
     build-depends:    semigroups
-  
+
   default-language: Haskell2010
 
   ghc-options:      -O2
