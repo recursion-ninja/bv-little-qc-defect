@@ -6,20 +6,12 @@ cache:
 matrix:
   include:
     # MacOS builds
-    - compiler: "ghc-7.10.3"
-      env: CABALVER=1.24 GHCVER=7.10.3
-      language: generic
-      os: osx
     - compiler: "ghc-8.0.2"
-      env: CABALVER=1.24 GHCVER=8.0.2
+      env: CABALVER=2.0 GHCVER=8.0.2
       language: generic
       os: osx
     - compiler: "ghc-8.2.2"
-      env: CABALVER=1.24 GHCVER=8.2.2
-      language: generic
-      os: osx
-    - compiler: "ghc-8.4.1"
-      env: CABALVER=1.24 GHCVER=8.4.1
+      env: CABALVER=2.0 GHCVER=8.2.2
       language: generic
       os: osx
 
@@ -54,8 +46,11 @@ matrix:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ghc-$GHCVER cabal-install-$CABALVER; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$GHCVER" == "8.0.2"]]; then brew install ghc@8.0 cabal-install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$GHCVER" == "8.2.2"]]; then brew install ghc     cabal-install; fi
   - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
+  - ls /opt/cabal/
+  - ls /opt/ghc/
 
 install:
   - cabal --version
