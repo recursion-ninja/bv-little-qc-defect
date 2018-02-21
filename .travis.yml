@@ -11,7 +11,7 @@ matrix:
     - compiler: "ghc-8.0.2"
       env: GHCVER=8.0.2
       os: osx
-    - compiler: "ghc-8.0.2"
+    - compiler: "ghc-8.2.2"
       env: GHCVER=8.2.2
       os: osx
 
@@ -44,8 +44,8 @@ before_install:
   # MacOS setups
   # - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   # Install specific GHC version
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$GHCVER" == "8.0.2" ]]; then brew install ghc@8.0 cabal-install; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$GHCVER" == "8.2.2" ]]; then brew install ghc     cabal-install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$GHCVER" == "8.0.2" ]]; then brew install ghc@8.0 cabal-install && export PATH=/usr/local/opt/ghc@8.0/bin:$PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$GHCVER" == "8.2.2" ]]; then brew install ghc     cabal-install && export PATH=/usr/local/opt/ghc/bin:$PATH; fi
 
   # Linux setups
   # Export PATH to specifically installed Cabal & GHC versions

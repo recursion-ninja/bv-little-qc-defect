@@ -410,4 +410,3 @@ bitVectorProperties = testGroup "BitVector properties"
     noSignBitVector :: BitVector -> Property
     noSignBitVector bv =
         isSigned bv === False
-
