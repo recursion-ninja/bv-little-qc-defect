@@ -26,13 +26,13 @@ matrix:
       os: linux
       sudo: false
       addons: {apt: {packages: [cabal-install-1.24, ghc-8.2.2], sources: [hvr-ghc]}}
-    - env: GHCVER=8.4.1 CABALVER=1.24
+    - env: [GHCVER=8.4.1, CABALVER=1.24]
       os: linux
       sudo: false
       addons: {apt: {packages: [cabal-install-1.24, ghc-8.4.1], sources: [hvr-ghc]}}
 
   allow_failures:
-    - env: GHCVER=8.4.1 CABALVER=1.24
+    - env: GHCVER=8.4.1
 
 before_install:
   # MacOS setups
