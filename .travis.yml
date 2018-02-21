@@ -22,10 +22,8 @@ matrix:
   include:
     # MacOS builds
     - env: GHCVER=8.0.2
-      ghc: "8.0"
       os: osx
     - env: GHCVER=8.2.2
-      ghc: "8.2"
       os: osx
 
     # Linux builds
