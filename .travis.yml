@@ -13,6 +13,10 @@ env:
 
 addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
 
+compiler:
+    - "ghc-8.4.1"
+      if: env(GHCVER) = 8.4.1
+
 cache:
   directories:
     - ~/.ghc
@@ -53,7 +57,7 @@ matrix:
 #      sudo: false
 
   allow_failures:
-    - GHCVER=8.4.1
+    - compiler: ghc-8.4.1
 
 before_install:
   # MacOS setups
