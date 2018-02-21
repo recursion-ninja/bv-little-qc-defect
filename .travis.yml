@@ -3,12 +3,13 @@ language: haskell
 os: linux
 
 env:
-  - GHCVER=7.10.3
-  - GHCVER=8.0.2
-  - GHCVER=8.2.2
-  - GHCVER=8.4.1
-  - CABALVER=1.24
-  - CABALVER=2.0
+  global:
+    - CABALVER=1.24
+  matrix:
+    - GHCVER=7.10.3
+    - GHCVER=8.0.2
+    - GHCVER=8.2.2
+    - GHCVER=8.4.1 TRAVIS_ALLOW_FAILURE=true
 
 addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
 
