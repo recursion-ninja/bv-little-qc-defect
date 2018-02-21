@@ -11,7 +11,7 @@ env:
     - GHCVER=8.2.2
     - GHCVER=8.4.1
 
-compiler: "ghc-"+env(foo)
+compiler: env(GHCVER)
 
 addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
 
@@ -23,11 +23,11 @@ cache:
 matrix:
   include:
     # MacOS builds
-    - compiler: "ghc-8.0.2"
+    - compiler: "8.0.2"
       env: GHCVER=8.0.2
       language: generic
       os: osx
-    - compiler: "ghc-8.2.2"
+    - compiler: "8.2.2"
       env: GHCVER=8.2.2
       language: generic
       os: osx
