@@ -1,25 +1,5 @@
 language: generic
 
-os: linux
-
-sudo: false
-
-env:
-  global:
-    - CABALVER=1.24
-  matrix:
-    - GHCVER=7.10.3
-    - GHCVER=8.0.2
-    - GHCVER=8.2.2
-    - GHCVER=8.4.1
-
-addons:
-  apt:
-    packages:
-      - cabal-install-$CABALVER
-      - ghc-$GHCVER
-    sources: hvr-ghc
-
 cache:
   directories:
     - ~/.ghc
@@ -27,11 +7,29 @@ cache:
 
 matrix:
   include:
-    # MacOS requires specific matrix entries
+    # MacOS builds
     - env: GHCVER=8.0.2
       os: osx
     - env: GHCVER=8.2.2
       os: osx
+
+    # Linux builds
+    - env: GHCVER=7.10.3 CABALVER=1.24 
+      os: linux
+      sudo: false
+      addons: {apt: {packages: [cabal-install-1.24, ghc-7.10.3],sources: [hvr-ghc]}}
+    - env: GHCVER=8.0.2 CABALVER=1.24 
+      os: linux
+      sudo: false
+      addons: {apt: {packages: [cabal-install-1.24, ghc-8.0.2], sources: [hvr-ghc]}}
+    - env: GHCVER=8.2.2 CABALVER=1.24
+      os: linux
+      sudo: false
+      addons: {apt: {packages: [cabal-install-1.24, ghc-8.2.2], sources: [hvr-ghc]}}
+    - env: GHCVER=8.4.1 CABALVER=1.24
+      os: linux
+      sudo: false
+      addons: {apt: {packages: [cabal-install-1.24, ghc-8.4.1], sources: [hvr-ghc]}}
 
   allow_failures:
     - env: GHCVER=8.4.1
