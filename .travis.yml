@@ -9,7 +9,9 @@ env:
     - GHCVER=7.10.3
     - GHCVER=8.0.2
     - GHCVER=8.2.2
-    - GHCVER=8.4.1 TRAVIS_ALLOW_FAILURE=true
+    - GHCVER=8.4.1
+
+compiler: "ghc-"+env(foo)
 
 addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
 
@@ -22,11 +24,11 @@ matrix:
   include:
     # MacOS builds
     - compiler: "ghc-8.0.2"
-      env: CABALVER=2.0 GHCVER=8.0.2
+      env: GHCVER=8.0.2
       language: generic
       os: osx
     - compiler: "ghc-8.2.2"
-      env: CABALVER=2.0 GHCVER=8.2.2
+      env: GHCVER=8.2.2
       language: generic
       os: osx
 
