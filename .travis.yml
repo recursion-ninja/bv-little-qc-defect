@@ -33,20 +33,19 @@ matrix:
     # macOS builds
     - compiler: "ghc-7.10.3"
       env: CABALVER=1.24 GHCVER=7.10.3
-      addons: {apt: {packages: [cabal-install-1.24,ghc-7.10.3],sources: [hvr-ghc]}}
+    #  addons: {apt: {packages: [cabal-install-1.24,ghc-7.10.3],sources: [hvr-ghc]}}
       os: osx
     - compiler: "ghc-8.0.2"
       env: CABALVER=1.24 GHCVER=8.0.2
-      addons: {apt: {packages: [cabal-install-1.24,ghc-8.0.2], sources: [hvr-ghc]}}
+    #  addons: {apt: {packages: [cabal-install-1.24,ghc-8.0.2], sources: [hvr-ghc]}}
       os: osx
     - compiler: "ghc-8.2.2"
       env: CABALVER=1.24 GHCVER=8.2.2
-      addons: {apt: {packages: [cabal-install-1.24,ghc-8.2.2], sources: [hvr-ghc]}}
+    #  addons: {apt: {packages: [cabal-install-1.24,ghc-8.2.2], sources: [hvr-ghc]}}
       os: osx
-    - os: linux
-      compiler: "ghc-8.4.1"
+    - compiler: "ghc-8.4.1"
       env: CABALVER=1.24 GHCVER=8.4.1
-      addons: {apt: {packages: [cabal-install-1.24,ghc-8.4.1], sources: [hvr-ghc]}}
+    #  addons: {apt: {packages: [cabal-install-1.24,ghc-8.4.1], sources: [hvr-ghc]}}
       os: osx
 
   allow_failures:
