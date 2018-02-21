@@ -5,15 +5,19 @@ os: linux
 env:
   global:
     - CABALVER=1.24
-  matrix:
-    - GHCVER=7.10.3
-    - GHCVER=8.0.2
-    - GHCVER=8.2.2
-    - GHCVER=8.4.1
+#  matrix:
+#    - GHCVER=7.10.3
+#    - GHCVER=8.0.2
+#    - GHCVER=8.2.2
+#    - GHCVER=8.4.1
 
-compiler: env(GHCVER)
+ghc:
+  - "7.10"
+  - "8.0"
+  - "8.2"
+  - "8.4"
 
-addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
+#addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
 
 cache:
   directories:
@@ -58,8 +62,8 @@ matrix:
 #      os: linux
 #      sudo: false
 
-#  allow_failures:
-#    - compiler: "ghc-8.4.1"
+  allow_failures:
+    - ghc: "8.4"
 
 before_install:
   # MacOS setups
