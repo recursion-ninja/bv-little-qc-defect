@@ -1,3 +1,19 @@
+language: haskell
+
+os: linux
+
+env:
+  - GHCVER=7.10.3
+  - GHCVER=8.0.2
+  - GHCVER=8.2.2
+  - GHCVER=8.4.1
+
+env:
+  - CABALVER=1.24
+  - CABALVER=2.0
+
+addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
+
 cache:
   directories:
     - ~/.ghc
@@ -16,33 +32,33 @@ matrix:
       os: osx
 
     # Linux builds
-    - compiler: "ghc-7.10.3"
-      env: CABALVER=1.24 GHCVER=7.10.3
-      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
-      language: haskell
-      os: linux
-      sudo: false
-    - compiler: "ghc-8.0.2"
-      env: CABALVER=1.24 GHCVER=8.0.2
-      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
-      language: haskell
-      os: linux
-      sudo: false
-    - compiler: "ghc-8.2.2"
-      env: CABALVER=1.24 GHCVER=8.2.2
-      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
-      language: haskell
-      os: linux
-      sudo: false
-    - compiler: "ghc-8.4.1"
-      env: CABALVER=1.24 GHCVER=8.4.1
-      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
-      language: haskell
-      os: linux
-      sudo: false
+#    - compiler: "ghc-7.10.3"
+#      env: CABALVER=1.24 GHCVER=7.10.3
+#      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
+#      language: haskell
+#      os: linux
+#      sudo: false
+#    - compiler: "ghc-8.0.2"
+#      env: CABALVER=1.24 GHCVER=8.0.2
+#      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
+#      language: haskell
+#      os: linux
+#      sudo: false
+#    - compiler: "ghc-8.2.2"
+#      env: CABALVER=1.24 GHCVER=8.2.2
+#      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
+#      language: haskell
+#      os: linux
+#      sudo: false
+#    - compiler: "ghc-8.4.1"
+#      env: CABALVER=1.24 GHCVER=8.4.1
+#      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
+#      language: haskell
+#      os: linux
+#      sudo: false
 
-  allow_failures:
-    - compiler: "ghc-8.4.1"
+#  allow_failures:
+#    - compiler: "ghc-8.4.1"
 
 before_install:
   # MacOS setups
