@@ -46,8 +46,8 @@ matrix:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-#  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$GHCVER" == "8.0.2"]]; then brew install ghc@8.0 cabal-install; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$GHCVER" == "8.2.2"]]; then brew install ghc     cabal-install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ] AND [ "$GHCVER" == "8.0.2" ]]; then brew install ghc@8.0 cabal-install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ] AND [ "$GHCVER" == "8.2.2" ]]; then brew install ghc     cabal-install; fi
   - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
   - ls /opt/cabal/
   - ls /opt/ghc/
