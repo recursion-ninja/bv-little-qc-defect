@@ -1,5 +1,7 @@
-language: haskell
+language: generic
+
 os: linux
+
 sudo: false
 
 env:
@@ -11,7 +13,12 @@ env:
     - GHCVER=8.2.2
     - GHCVER=8.4.1
 
-addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
+addons:
+  apt:
+    packages:
+      - cabal-install-$CABALVER
+      - ghc-$GHCVER
+    sources: hvr-ghc
 
 cache:
   directories:
@@ -20,50 +27,24 @@ cache:
 
 matrix:
   include:
-    # MacOS builds
+    # MacOS requires specific matrix entries
     - env: GHCVER=8.0.2
-      language: generic
       os: osx
     - env: GHCVER=8.2.2
-      language: generic
       os: osx
-
-    # Linux builds
-#    - compiler: "ghc-7.10.3"
-#      env: CABALVER=1.24 GHCVER=7.10.3
-#      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
-#      language: haskell
-#      os: linux
-#      sudo: false
-#    - compiler: "ghc-8.0.2"
-#      env: CABALVER=1.24 GHCVER=8.0.2
-#      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
-#      language: haskell
-#      os: linux
-#      sudo: false
-#    - compiler: "ghc-8.2.2"
-#      env: CABALVER=1.24 GHCVER=8.2.2
-#      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
-#      language: haskell
-#      os: linux
-#      sudo: false
-#    - compiler: "ghc-8.4.1"
-#      env: CABALVER=1.24 GHCVER=8.4.1
-#      addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
-#      language: haskell
-#      os: linux
-#      sudo: false
 
   allow_failures:
     - env: GHCVER=8.4.1
 
 before_install:
   # MacOS setups
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  # - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  # Install specific GHC version
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$GHCVER" == "8.0.2" ]]; then brew install ghc@8.0 cabal-install; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$GHCVER" == "8.2.2" ]]; then brew install ghc     cabal-install; fi
 
   # Linux setups
+  # Export PATH to specifically installed Cabal & GHC versions
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH; fi
 
 install:
