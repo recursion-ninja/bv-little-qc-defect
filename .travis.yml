@@ -7,8 +7,6 @@ env:
   - GHCVER=8.0.2
   - GHCVER=8.2.2
   - GHCVER=8.4.1
-
-env:
   - CABALVER=1.24
   - CABALVER=2.0
 
