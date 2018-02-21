@@ -1,5 +1,3 @@
-language: c
-
 cache:
   directories:
     - ~/.ghc
@@ -7,46 +5,53 @@ cache:
 
 matrix:
   include:
+    # MacOS builds
+    - compiler: "ghc-7.10.3"
+      env: CABALVER=1.24 GHCVER=7.10.3
+    #  addons: {apt: {packages: [cabal-install-1.24,ghc-7.10.3],sources: [hvr-ghc]}}
+      os: osx
+      language: generic
+    - compiler: "ghc-8.0.2"
+      env: CABALVER=1.24 GHCVER=8.0.2
+    #  addons: {apt: {packages: [cabal-install-1.24,ghc-8.0.2], sources: [hvr-ghc]}}
+      os: osx
+      language: generic
+    - compiler: "ghc-8.2.2"
+      env: CABALVER=1.24 GHCVER=8.2.2
+    #  addons: {apt: {packages: [cabal-install-1.24,ghc-8.2.2], sources: [hvr-ghc]}}
+      os: osx
+      language: generic
+    - compiler: "ghc-8.4.1"
+      env: CABALVER=1.24 GHCVER=8.4.1
+    #  addons: {apt: {packages: [cabal-install-1.24,ghc-8.4.1], sources: [hvr-ghc]}}
+      os: osx
+      language: generic
+
     # Linux builds
     - compiler: "ghc-7.10.3"
       env: CABALVER=1.24 GHCVER=7.10.3
       addons: {apt: {packages: [cabal-install-1.24,ghc-7.10.3],sources: [hvr-ghc]}}
       os: linux
+      language: haskell
       sudo: false
     - compiler: "ghc-8.0.2"
       env: CABALVER=1.24 GHCVER=8.0.2
       addons: {apt: {packages: [cabal-install-1.24,ghc-8.0.2], sources: [hvr-ghc]}}
       os: linux
+      language: haskell
       sudo: false
     - compiler: "ghc-8.2.2"
       env: CABALVER=1.24 GHCVER=8.2.2
       addons: {apt: {packages: [cabal-install-1.24,ghc-8.2.2], sources: [hvr-ghc]}}
       os: linux
+      language: haskell
       sudo: false
-    - os: linux
-      compiler: "ghc-8.4.1"
+    - compiler: "ghc-8.4.1"
       env: CABALVER=1.24 GHCVER=8.4.1
       addons: {apt: {packages: [cabal-install-1.24,ghc-8.4.1], sources: [hvr-ghc]}}
       os: linux
+      language: haskell
       sudo: false
-
-    # macOS builds
-    - compiler: "ghc-7.10.3"
-      env: CABALVER=1.24 GHCVER=7.10.3
-    #  addons: {apt: {packages: [cabal-install-1.24,ghc-7.10.3],sources: [hvr-ghc]}}
-      os: osx
-    - compiler: "ghc-8.0.2"
-      env: CABALVER=1.24 GHCVER=8.0.2
-    #  addons: {apt: {packages: [cabal-install-1.24,ghc-8.0.2], sources: [hvr-ghc]}}
-      os: osx
-    - compiler: "ghc-8.2.2"
-      env: CABALVER=1.24 GHCVER=8.2.2
-    #  addons: {apt: {packages: [cabal-install-1.24,ghc-8.2.2], sources: [hvr-ghc]}}
-      os: osx
-    - compiler: "ghc-8.4.1"
-      env: CABALVER=1.24 GHCVER=8.4.1
-    #  addons: {apt: {packages: [cabal-install-1.24,ghc-8.4.1], sources: [hvr-ghc]}}
-      os: osx
 
   allow_failures:
     - compiler: "ghc-8.4.1"
