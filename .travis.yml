@@ -1,6 +1,6 @@
 language: haskell
-
 os: linux
+sudo: false
 
 env:
   global:
@@ -12,10 +12,6 @@ env:
     - GHCVER=8.4.1
 
 addons: {apt: {packages: [cabal-install-$CABALVER, ghc-$GHCVER], sources: [hvr-ghc]}}
-
-compiler:
-    - "ghc-8.4.1"
-      if: env(GHCVER) = 8.4.1
 
 cache:
   directories:
@@ -59,7 +55,7 @@ matrix:
 #      sudo: false
 
   allow_failures:
-    - compiler: ghc-8.4.1
+    - env: GHCVER=8.4.1
 
 before_install:
   # MacOS setups
