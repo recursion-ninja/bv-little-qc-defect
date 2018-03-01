@@ -16,7 +16,7 @@
 -- Little-endian bit vectors are isomorphic to a @[Bool]@ with the /least/
 -- significant bit at the head of the list and the /most/ significant bit at the
 -- end of the list. Consequently, the endianness of a bit vector affects the semantics of the
--- following type classes:
+-- following typeclasses:
 --
 --   * 'Bits'
 --   * 'FiniteBits'
