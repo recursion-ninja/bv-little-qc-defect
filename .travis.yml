@@ -75,12 +75,12 @@ install:
     fi
 
   # Install dependencies and utility programs
-  - cabal install --enable-benchmarks --enable-tests --only-dependencies
+  - cabal install --enable-benchmarks --enable-documentation --enable-tests --only-dependencies
   - cabal install hpc
   - cabal install hpc-coveralls
 
 script:
-  - cabal configure --enable-coverage --enable-benchmarks --enable-tests
+  - cabal configure --enable-coverage --enable-documentation --enable-benchmarks --enable-tests
   - cabal sdist
   - cabal build
   - cabal test --show-details=always
