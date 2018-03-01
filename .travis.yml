@@ -80,7 +80,7 @@ install:
   - cabal install hpc-coveralls
 
 script:
-  - cabal configure --enable-coverage --enable-documentation --enable-benchmarks --enable-tests
+  - cabal configure --enable-coverage --enable-benchmarks --enable-tests
   - cabal sdist
   - cabal build
   - cabal test --show-details=always
