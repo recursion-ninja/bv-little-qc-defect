@@ -10,7 +10,7 @@
 
 This package contains an efficient implementation of little-endian bit vectors. It implements most applicable typeclasses and also conversions to and from signed or unsigned numbers. Care has been taken to balance the number of transitive dependencies with respect to functionality provided.
 
-For an implementation of bit vectors which are isomorphic to a `Bool` with the /most/ significant bit at the head of the list and the /least/ significant bit at the end of the list, use the [`bv`](https://hackage.haskell.org/package/bv) package.
+For an implementation of big-endian bit vectors, use the [`bv`](https://hackage.haskell.org/package/bv) package.
 
 #### Tests
 
