@@ -11,7 +11,7 @@ bug-reports:         https://github.com/recursion-ninja/bv-little/issues
 copyright:           (c) Alex Washburn 2018
 description:
   .
-  This package contains a time- and space- efficient implementation of little-endian bit vectors. Provides implementations of applicable typeclasses and numeric conversions.
+  This package contains a time- and space- efficient implementation of /little-endian/ bit vectors. Provides implementations of applicable typeclasses and numeric conversions.
   .
   The declared cost of each operation is either worst-case or amortized.
   .
