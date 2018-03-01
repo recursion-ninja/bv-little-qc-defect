@@ -462,7 +462,7 @@ fromNumber !dimValue !intValue = BV width $ mask .&. v
 
 
 -- |
--- Two&#8217s complement value of a bit vector.
+-- Two's complement value of a bit vector.
 --
 -- /Time:/ \(\, \mathcal{O} \left( 1 \right) \)
 --
