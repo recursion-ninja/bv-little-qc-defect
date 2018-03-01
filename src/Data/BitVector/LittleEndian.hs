@@ -10,7 +10,7 @@
 --
 -- A bit vector similar to @Data.BitVector@ from the
 -- <https://hackage.haskell.org/package/bv bv>, however the endianness is
--- reversed. This module defines /little-endian/ pseudo&#8211;size-polymorphic
+-- reversed. This module defines /little-endian/ pseudo–size-polymorphic
 -- bit vectors.
 --
 -- Little-endian bit vectors are isomorphic to a @[Bool]@ with the /least/
@@ -419,12 +419,12 @@ toBits (BV w n) = testBit n <$> [ 0 .. w - 1 ]
 -- Create a bit vector of non-negative dimension from an integral value.
 --
 -- The integral value will be treated as an /signed/ number and the resulting
--- bit vector will contain the two&#8217;s complement bit representation of the number.
+-- bit vector will contain the two's complement bit representation of the number.
 --
 -- The integral value will be interpreted as /little-endian/ so that the least
 -- significant bit of the integral value will be the value of the 0th index of
 -- the resulting bit vector and the most significant bit of the integral value
--- will be at index @dimension &#8722;1@.
+-- will be at index @dimension − 1@.
 --
 -- Note that if the bit representation of the integral value exceeds the
 -- supplied dimension, then the most significant bits will be truncated in the
