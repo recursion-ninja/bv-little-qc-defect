@@ -373,8 +373,7 @@ bitVectorProperties = testGroup "BitVector properties"
     , testProperty "toSignedNumber . fromNumber === id" bitVectorUnsignedNumIdentity
     , testProperty "isSigned == const False" noSignBitVector
     , testProperty "i >  j ==> subRange (i,j) === const zeroBits" badSubRangeEmptyResult
-    , testProperty "i <= j ==> dimension . subRange (i,j) === const (j - i)" subRangeFixedDimension
---     , testProperty "subRangeOverlapsSource"
+--    , testProperty "i <= j ==> dimension . subRange (i,j) === const (j - i)" subRangeFixedDimension
     ]
   where
     otoListTest :: BitVector -> Property
@@ -423,12 +422,13 @@ bitVectorProperties = testGroup "BitVector properties"
     badSubRangeEmptyResult range@(lower, upper) bv =
         lower > upper ==> subRange range bv === zeroBits
 
+{-
     subRangeFixedDimension :: (Int, Int) -> BitVector -> Property
     subRangeFixedDimension range@(lower, upper) bv =
-        lower <= upper ==> dimension (subRange (f lower, f upper) bv) === (f upper - f lower) + 1
+        f lower <= f upper ==> dimension (subRange (f lower, f upper) bv) === (f upper - f lower) + 1
       where
         f = toEnum . abs
-
---    subRangeOverlapsSource :: (Word, Word) -> BitVector -> Property
---    subRangeOverlapsSource (lower, upper) bv =
---        lower < upper && upper < dimension ==> otoList (subRange (lower, upper) bv) `subStringOf` otoList bv
+-}
+    subRangeFixedDimension :: (Word, Word) -> BitVector -> Property
+    subRangeFixedDimension range@(lower, upper) bv =
+        lower <= upper ==> dimension (subRange (lower, upper) bv) === (upper - lower) + 1
