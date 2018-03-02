@@ -1,5 +1,10 @@
 {-# LANGUAGE FlexibleInstances #-}
 
+-- We apply this to suppress the deprecated warning cause by calls to 'bitSize'
+-- If there is a more fine-grained way to supress this warning without suppressing
+-- deprecated warnings for the whole module, we should do that instead.
+{-# OPTIONS_GHC -fno-warn-warnings-deprecations #-}
+
 module Main ( main ) where
 
 import Data.Bits
@@ -367,6 +372,9 @@ bitVectorProperties = testGroup "BitVector properties"
     , testProperty "(0 ==) . toUnsignedNumber ==> isZeroVector" toUnsignedNumImpliesZeroVector
     , testProperty "toSignedNumber . fromNumber === id" bitVectorUnsignedNumIdentity
     , testProperty "isSigned == const False" noSignBitVector
+    , testProperty "i >  j ==> subRange (i,j) === const zeroBits" badSubRangeEmptyResult
+    , testProperty "i <= j ==> dimension . subRange (i,j) === const (j - i)" subRangeFixedDimension
+--     , testProperty "subRangeOverlapsSource"
     ]
   where
     otoListTest :: BitVector -> Property
@@ -410,3 +418,17 @@ bitVectorProperties = testGroup "BitVector properties"
     noSignBitVector :: BitVector -> Property
     noSignBitVector bv =
         isSigned bv === False
+
+    badSubRangeEmptyResult :: (Word, Word) -> BitVector -> Property
+    badSubRangeEmptyResult range@(lower, upper) bv =
+        lower > upper ==> subRange range bv === zeroBits
+
+    subRangeFixedDimension :: (Int, Int) -> BitVector -> Property
+    subRangeFixedDimension range@(lower, upper) bv =
+        lower <= upper ==> dimension (subRange (f lower, f upper) bv) === (f upper - f lower) + 1
+      where
+        f = toEnum . abs
+
+--    subRangeOverlapsSource :: (Word, Word) -> BitVector -> Property
+--    subRangeOverlapsSource (lower, upper) bv =
+--        lower < upper && upper < dimension ==> otoList (subRange (lower, upper) bv) `subStringOf` otoList bv
