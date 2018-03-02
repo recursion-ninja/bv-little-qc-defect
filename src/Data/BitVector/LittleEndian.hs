@@ -144,7 +144,7 @@ dimension = toEnum . dim
 subRange :: (Word, Word) -> BitVector -> BitVector
 subRange (!lower, !upper) (BV _ n)
   | lower > upper = BV 0 0
-  | otherwise     = BV m $ (n `shiftR` i) `mod` 2^m
+  | otherwise     = BV m $ n `mod` 2^m
   where
-    i = fromEnum lower
     m = fromEnum $ upper - lower + 1
+
