@@ -41,6 +41,7 @@
 
 module Data.BitVector.LittleEndian
   ( BitVector()
+{-
   -- * Bit-stream conversion
   , fromBits
   , toBits
@@ -49,8 +50,9 @@ module Data.BitVector.LittleEndian
   , toSignedNumber
   , toUnsignedNumber
   -- * Queries
-  , dimension
   , isZeroVector
+-}
+  , dimension
   , subRange
   ) where
 
@@ -101,6 +103,7 @@ instance Show BitVector where
     show (BV w n) = mconcat [ "[", show w, "]", show n ]
 
 
+{-
 -- |
 -- Create a bit vector from a /little-endian/ list of bits.
 --
@@ -261,6 +264,26 @@ toUnsignedNumber = fromInteger . nat
 
 
 -- |
+-- Determine if /any/ bits are set in the 'BitVector'.
+-- Faster than @(0 ==) . popCount@.
+--
+-- /Time:/ \(\, \mathcal{O} \left( 1 \right) \)
+--
+-- /Since: 0.1.0.0/
+--
+-- ==== __Examples__
+--
+-- >>> isZeroVector [2]3
+-- False
+--
+-- >>> isZeroVector [4]0
+-- True
+{-# INLINE isZeroVector #-}
+isZeroVector :: BitVector -> Bool
+isZeroVector = (0 ==) . nat
+-}
+
+-- |
 -- Get the dimension of a 'BitVector'. Preferable to 'finiteBitSize' as it
 -- returns a type which cannot represent a non-negative value and a 'BitVector'
 -- must have a non-negative dimension.
@@ -279,26 +302,6 @@ toUnsignedNumber = fromInteger . nat
 {-# INLINE dimension #-}
 dimension :: BitVector -> Word
 dimension = toEnum . dim
-
-
--- |
--- Determine if /any/ bits are set in the 'BitVector'.
--- Faster than @(0 ==) . popCount@.
---
--- /Time:/ \(\, \mathcal{O} \left( 1 \right) \)
---
--- /Since: 0.1.0.0/
---
--- ==== __Examples__
---
--- >>> isZeroVector [2]3
--- False
---
--- >>> isZeroVector [4]0
--- True
-{-# INLINE isZeroVector #-}
-isZeroVector :: BitVector -> Bool
-isZeroVector = (0 ==) . nat
 
 
 -- |
