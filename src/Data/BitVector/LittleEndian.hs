@@ -41,28 +41,12 @@
 
 module Data.BitVector.LittleEndian
   ( BitVector()
-  , dimension
   , subRange
   ) where
 
 
-import Control.DeepSeq
-import Data.Bits
-import Data.Data
-import Data.Foldable
-import Data.Hashable
-import Data.List.NonEmpty (NonEmpty(..))
-import Data.Monoid        ()
-import Data.MonoTraversable
-import Data.Ord
-import Data.Primitive.ByteArray
-import Data.Semigroup
 import Data.Word
-import GHC.Exts
-import GHC.Generics
-import GHC.Integer.GMP.Internals
-import GHC.Integer.Logarithms
-import Test.QuickCheck (Arbitrary(..), CoArbitrary(..), NonNegative(..), suchThat)
+import Test.QuickCheck (Arbitrary(..), NonNegative(..), suchThat)
 
 
 -- |
@@ -90,27 +74,6 @@ instance Arbitrary BitVector where
 instance Show BitVector where
 
     show (BV w n) = mconcat [ "[", show w, "]", show n ]
-
-
--- |
--- Get the dimension of a 'BitVector'. Preferable to 'finiteBitSize' as it
--- returns a type which cannot represent a non-negative value and a 'BitVector'
--- must have a non-negative dimension.
---
--- /Time:/ \(\, \mathcal{O} \left( 1 \right) \)
---
--- /Since: 0.1.0.0/
---
--- ==== __Examples__
---
--- >>> dimension [2]3
--- 2
---
--- >>> dimension [4]12
--- 4
-{-# INLINE dimension #-}
-dimension :: BitVector -> Word
-dimension = toEnum . dim
 
 
 -- |
