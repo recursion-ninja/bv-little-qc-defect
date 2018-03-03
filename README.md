@@ -1,37 +1,20 @@
-## Efficient little-endian bit vector Haskell library
+## Minimal Woring example of a QuickCheck anomoly
 
-[![Build Status](https://travis-ci.org/recursion-ninja/bv-little.svg?branch=master)](https://travis-ci.org/recursion-ninja/bv-little)
-[![Coverage Status](https://coveralls.io/repos/github/recursion-ninja/bv-little/badge.svg?branch=master)](https://coveralls.io/github/recursion-ninja/bv-little?branch=master)
-[![License FreeBSD](https://img.shields.io/badge/license-FreeBSD-brightgreen.svg)](http://opensource.org/licenses/BSD-3-Clause)
-[![Hackage](https://img.shields.io/hackage/v/bv-little.svg?style=flat)](https://hackage.haskell.org/package/bv-little)
-[![Stackage Nightly](http://stackage.org/package/bv-little/badge/nightly)](http://stackage.org/nightly/package/bv-little)
-[![Stackage LTS](http://stackage.org/package/bv-little/badge/lts)](http://stackage.org/lts/package/bv-little)
+    cabal sandbox init
+    cabal install --enable-library-profiling --enable-executable-profiling --enable-tests
+    cabal ./dist/dist-sandbox-*/build/test-suite/test-suite +RTS -p -RTS
+    ^C
+    head test-suite.prof
 
+Which results in the following output, note the loop in problemFunction:
 
-This package contains an efficient implementation of little-endian bit vectors. It implements most applicable typeclasses and also conversions to and from signed or unsigned numbers. Care has been taken to balance the number of transitive dependencies with respect to functionality provided.
+    Fri Mar  2 20:05 2018 Time and Allocation Profiling Report  (Final)
 
-For an implementation of big-endian bit vectors, use the [`bv`](https://hackage.haskell.org/package/bv) package.
+       test-suite +RTS -p -RTS
 
-#### Tests
+       total time  =        4.48 secs   (4482 ticks @ 1000 us, 1 processor)
+       total alloc =  86,863,456 bytes  (excludes profiling overheads)
 
-The test suite ensures that all typeclass instances are "lawful" and that data-structure–specific functionality is well defined.
+    COST CENTRE     MODULE            %time %alloc
 
-The `TestSuite.hs` file contains the specification. It can be run by invoking any of the following commands:
-
-  * `cabal new-test`
-
-  * `cabal test`
-
-  * `stack test`
-
-#### Benchmarks
-
-The benchmarks provide an empirical check for the asymptotic complexity of data structure operations and also provide easy metrics for detecting performance regressions.
-
-The `Benchmaks.hs` file contains these metrics. It can be run by invoking any of the following commands:
-
-  * `cabal new-bench`
-
-  * `cabal bench`
-
-  * `stack bench`
+    problemFunction Data.ExampleType   99.9   96.7
