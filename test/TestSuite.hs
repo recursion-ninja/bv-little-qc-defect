@@ -7,17 +7,8 @@
 
 module Main ( main ) where
 
-import Data.Bits
-import Data.BitVector.LittleEndian
-import Data.Functor.Compose
-import Data.Functor.Identity
-import Data.Hashable
-import Data.List.NonEmpty (NonEmpty(..))
-import Data.Monoid ()
-import Data.MonoTraversable
-import Data.Semigroup
+import Data.ExampleType
 import Test.Tasty
-import Test.Tasty.HUnit
 import Test.Tasty.QuickCheck hiding ((.&.))
 
 
@@ -27,22 +18,16 @@ main = defaultMain testSuite
 
 testSuite :: TestTree
 testSuite = testGroup "BitVector tests"
-    [ bitVectorProperties
-    ]
-
-
-bitVectorProperties :: TestTree
-bitVectorProperties = testGroup "BitVector properties"
-    [ testProperty "i <= j ==> dimension . subRange (i,j) === const (j - i)" subRangeFixedDimension
+    [ testProperty "When i :: Int,  0 < i ==> (problemFunction i bv) =/= _|_" workingInt
+    , testProperty "When w :: Word, 0 < w ==> (problemFunction w bv) =/= _|_" brokenWord
     ]
   where
-{-
-    subRangeFixedDimension :: (Int, Int) -> BitVector -> Property
-    subRangeFixedDimension (lower, upper) bv =
-        f lower <= f upper ==> subRange (f lower, f upper) bv `seq` () === ()
+    workingInt :: Int -> ExampleType -> Property
+    workingInt i bv =
+        True ==> problemFunction (f i) bv `seq` () === ()
       where
         f = toEnum . abs
--}
-    subRangeFixedDimension :: Word -> BitVector -> Property
-    subRangeFixedDimension upper bv =
-        lower <= upper ==> subRange upper bv `seq` () === ()
+
+    brokenWord :: Word -> ExampleType -> Property
+    brokenWord w bv =
+        True ==> problemFunction w bv `seq` () === ()
