@@ -43,6 +43,6 @@ bitVectorProperties = testGroup "BitVector properties"
       where
         f = toEnum . abs
 -}
-    subRangeFixedDimension :: (Word, Word) -> BitVector -> Property
-    subRangeFixedDimension (lower, upper) bv =
-        lower <= upper ==> subRange (lower, upper) bv `seq` () === ()
+    subRangeFixedDimension :: Word -> BitVector -> Property
+    subRangeFixedDimension upper bv =
+        lower <= upper ==> subRange upper bv `seq` () === ()

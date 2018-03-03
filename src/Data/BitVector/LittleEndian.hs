@@ -64,10 +64,8 @@ instance Show BitVector where
 -- >>> subRange (10, 20) [4]7
 -- [10]0
 {-# INLINE subRange #-}
-subRange :: (Word, Word) -> BitVector -> BitVector
-subRange (!lower, !upper) (BV _ n)
-  | lower > upper = BV 0 0
-  | otherwise     = BV m $ 2^m
+subRange :: Word -> BitVector -> BitVector
+subRange (!lower) (BV _ n) = BV m $ 2^m
   where
     m = upper - lower + 1
 
