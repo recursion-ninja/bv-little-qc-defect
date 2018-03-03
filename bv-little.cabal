@@ -25,13 +25,12 @@ tested-with:         GHC == 8.4.1
                      GHC == 8.0.2
                      GHC == 7.10.3
 
-extra-source-files:  changelog.md
-                     README.md
+extra-source-files:  README.md
                      stack.yaml
 
 source-repository head
   type:     git
-  location: https://github.com/recursion-ninja/bv-little
+  location: https://github.com/recursion-ninja/bv-little-qc-defect
 
 
 library
@@ -81,17 +80,61 @@ library
                     -fwarn-unused-foralls
 
 
-Test-Suite test-suite
+Test-Suite test-double
 
   type:             exitcode-stdio-1.0
 
-  main-is:          TestSuite.hs
+  main-is:          TestDouble.hs
 
   build-depends:      base             >= 4.5.1 && < 4.11.1
                     , bv-little
                     , QuickCheck
-                    , tasty
-                    , tasty-quickcheck
 
   default-language: Haskell2010
 
+  hs-source-dirs: test
+
+  
+Test-Suite test-int
+
+  type:             exitcode-stdio-1.0
+
+  main-is:          TestInt.hs
+
+  build-depends:      base             >= 4.5.1 && < 4.11.1
+                    , bv-little
+                    , QuickCheck
+
+  default-language: Haskell2010
+
+  hs-source-dirs: test
+
+
+Test-Suite test-integer
+
+  type:             exitcode-stdio-1.0
+
+  main-is:          TestInteger.hs
+
+  build-depends:      base             >= 4.5.1 && < 4.11.1
+                    , bv-little
+                    , QuickCheck
+
+  default-language: Haskell2010
+
+  hs-source-dirs: test
+
+
+Test-Suite test-word
+
+  type:             exitcode-stdio-1.0
+
+  main-is:          TestWord.hs
+
+  build-depends:      base             >= 4.5.1 && < 4.11.1
+                    , bv-little
+                    , QuickCheck
+
+  default-language: Haskell2010
+
+  hs-source-dirs: test

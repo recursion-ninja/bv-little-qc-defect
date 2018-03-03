@@ -2,7 +2,7 @@
 
     cabal sandbox init
     cabal install --enable-library-profiling --enable-executable-profiling --enable-tests
-    cabal ./dist/dist-sandbox-*/build/test-suite/test-suite +RTS -p -RTS
+    cabal ./dist/dist-sandbox-*/build/test-word/test-word +RTS -p -RTS
     ^C
     head test-suite.prof
 
