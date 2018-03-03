@@ -5,7 +5,7 @@ import Test.QuickCheck
 
 
 main :: IO ()
-main = putStrLn "n ∷ Integer ⇒  problemFunction n ≠ ⊥"
+main = putStrLn "n ∷ Integer ⇒  problemFunction n = ⊥"
      >> quickCheck workingInteger
 
 

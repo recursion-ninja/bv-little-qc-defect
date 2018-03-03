@@ -10,6 +10,4 @@ main = putStrLn "w ∷ Word    ⇒  problemFunction w = ⊥"
 
 
 brokenWord :: Word -> Bool
-brokenWord w = problemFunction (f w) `seq` True
-  where
-    f = toEnum . fromEnum
+brokenWord w = problemFunction w `seq` True
