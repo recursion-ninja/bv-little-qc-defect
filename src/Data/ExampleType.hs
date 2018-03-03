@@ -1,41 +1,24 @@
-{-# LANGUAGE BangPatterns #-}
-
 module Data.ExampleType
   ( ExampleType()
+  , fineFunction
   , problemFunction
   ) where
 
 
-import Test.QuickCheck (Arbitrary(..), NonNegative(..), suchThat)
-
-
 -- |
--- A little-endian bit vector of non-negative dimension.
-data  ExampleType = C !Word !Integer
-
-
--- |
--- Should be a simple instance.
-instance Arbitrary ExampleType where
-
-    arbitrary = do
-        dimVal <- toEnum . getNonNegative <$> arbitrary
-        let upperBound = 2^dimVal
-        intVal <- (getNonNegative <$> arbitrary) `suchThat` (< upperBound)
-        pure $ C dimVal intVal
-
-
-instance Show ExampleType where
-
-    show (C w n) = mconcat [ "[", show w, "]", show n ]
+-- Example type, the strictness in the second value is important.
+-- Without the strictness in the second argumnet, the problem function terminates.
+data ExampleType = C Word !Integer deriving (Show)
 
 
 -- |
 -- A minimal working example of the defect involving the Word type.
-{-# INLINE problemFunction #-}
-problemFunction :: Word -> ExampleType -> ExampleType
-problemFunction (!lower) (C _ n) = C m $ 2^m
-  where
-    m = lower + 1
+fineFunction :: Int -> ExampleType
+fineFunction w = C (toEnum (abs w)) $ 2^w
 
+
+-- |
+-- A minimal working example of the defect involving the Word type.
+problemFunction :: Word -> ExampleType
+problemFunction w = C w $ 2^w
 
