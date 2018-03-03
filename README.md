@@ -1,4 +1,4 @@
-## Minimal Woring example of a QuickCheck anomoly
+## Minimal Working example of a QuickCheck anomaly
 
     cabal sandbox init
     cabal install --enable-library-profiling --enable-executable-profiling --enable-tests
