@@ -1,43 +1,4 @@
------------------------------------------------------------------------------
--- |
--- Module      :  Data.BitVector.LittleEndian
--- Copyright   :  (c) Alex Washburn 2018
--- License     :  BSD-style
---
--- Maintainer  :  github@recursion.ninja
--- Stability   :  provisional
--- Portability :  portable
---
--- A bit vector similar to @Data.BitVector@ from the
--- <https://hackage.haskell.org/package/bv bv>, however the endianness is
--- reversed. This module defines /little-endian/ pseudo–size-polymorphic
--- bit vectors.
---
--- Little-endian bit vectors are isomorphic to a @[Bool]@ with the /least/
--- significant bit at the head of the list and the /most/ significant bit at the
--- end of the list. Consequently, the endianness of a bit vector affects the semantics of the
--- following typeclasses:
---
---   * 'Bits'
---   * 'FiniteBits'
---   * 'Semigroup'
---   * 'Monoid'
---   * 'MonoFoldable'
---   * 'MonoTraversable'
---
--- For an implementation of bit vectors which are isomorphic to a @[Bool]@ with the /most/
--- significant bit at the head of the list and the /least/ significant bit at the
--- end of the list, use the
--- <https://hackage.haskell.org/package/bv bv> package.
---
--- This module does /not/ define numeric instances for 'BitVector'. This is
--- intentional! To interact with a bit vector as an 'Integral' value,
--- convert the 'BitVector' using either 'toSignedNumber' or 'toUnsignedNumber'.
---
------------------------------------------------------------------------------
-
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, MagicHash #-}
-{-# LANGUAGE Trustworthy, TypeFamilies #-}
+{-# LANGUAGE BangPatterns #-}
 
 module Data.BitVector.LittleEndian
   ( BitVector()
@@ -45,7 +6,6 @@ module Data.BitVector.LittleEndian
   ) where
 
 
-import Data.Word
 import Test.QuickCheck (Arbitrary(..), NonNegative(..), suchThat)
 
 
@@ -53,8 +13,8 @@ import Test.QuickCheck (Arbitrary(..), NonNegative(..), suchThat)
 -- A little-endian bit vector of non-negative dimension.
 data  BitVector
     = BV
-    { dim :: {-# UNPACK #-} !Int -- ^ The /dimension/ of a bit vector.
-    , nat :: !Integer            -- ^ The value of a bit vector, as a natural number.
+    { dim :: !Word
+    , nat :: !Integer
     }
 
 
@@ -63,7 +23,7 @@ data  BitVector
 instance Arbitrary BitVector where
 
     arbitrary = do
-        dimVal <- getNonNegative <$> arbitrary
+        dimVal <- toEnum . getNonNegative <$> arbitrary
         let upperBound = 2^dimVal
         intVal <- (getNonNegative <$> arbitrary) `suchThat` (< upperBound)
         pure $ BV dimVal intVal
@@ -107,7 +67,8 @@ instance Show BitVector where
 subRange :: (Word, Word) -> BitVector -> BitVector
 subRange (!lower, !upper) (BV _ n)
   | lower > upper = BV 0 0
-  | otherwise     = BV m $ n `mod` 2^m
+  | otherwise     = BV m $ 2^m
   where
-    m = fromEnum $ upper - lower + 1
+    m = upper - lower + 1
+
 
